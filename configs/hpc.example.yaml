@@ -1,0 +1,40 @@
+# Verify these paths on the HPC. Relative paths resolve against this YAML file.
+inputs:
+  tensors: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/S8bOut-20Nov23
+  series: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/ParcellatedScans-20Nov23
+  clinical: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/ADNIMerge-Nov22.csv
+  freesurfer: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/S8bOut-20Nov23/sourcedata/freesurfer
+  # Required: explicit full mapping, including all 32 subcortical parcels in S8b order.
+  atlas: /data/scratch/bty184/adni-x/resources/atlas232.csv
+  resolutions: null
+  tensor_variable: PhiIDTensor
+  series_variable: null
+  tensor_axes: [0, 1, 2]
+cohort:
+  parcels: 232
+  estimator: mmi
+  time_min: 150
+  time_max: 250
+  visit: latest
+transform:
+  tdmi: none
+  confounds: [sex, education, visit_age, ICV]
+  missing: complete
+  adjustment: mean
+  age: visit
+  exclude_diagonal: true
+  regional_axis: 1
+  network_edges: both
+  epsilon: 1.0e-12
+  block_features: 4096
+statistics:
+  seed: 42
+  resamples: 10000
+  permutations: 10000
+  alpha: 0.05
+  welch: true
+  correction: fdr_bh
+  test_fraction: 0.25
+cache: /data/scratch/bty184/adni-x/cache
+results: /data/SBBS-PIDProject/Keenan/Results/ADNI-X
+

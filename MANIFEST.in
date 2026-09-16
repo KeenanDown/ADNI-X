@@ -1,0 +1,7 @@
+include README.md requirements.lock
+recursive-include configs *.yaml
+recursive-include docs *.md *.json
+recursive-include notebooks *.ipynb
+recursive-include scripts *.py *.sh
+recursive-include tests *.py
+

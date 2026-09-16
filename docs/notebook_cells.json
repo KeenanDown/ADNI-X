@@ -1,0 +1,2601 @@
+{
+  "source_notebook": "ADNI_Epilogue (1).ipynb",
+  "notebook_sha256": "a77cc92bcb9cc54faa924aa5d90a5ec3ca09195c044cc5d63122ee56254b8373",
+  "cells": [
+    {
+      "cell": 0,
+      "type": "markdown",
+      "source_sha256": "0806c2b6214b1ab7a5e2f65a54ef828550d8245e72e4b70507ece412a3915f02",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 1,
+      "type": "markdown",
+      "source_sha256": "568b65b314dca9634eb8848ac9f07e662278823154b9978a13419bc5ce909c7f",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 2,
+      "type": "markdown",
+      "source_sha256": "68757374bd5ceb2800f15979824e2ee38abea3deb420187ffca754ec73546cc0",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 3,
+      "type": "code",
+      "source_sha256": "787e6413c98ec6615a86a3a52637515c21e3a52ca78291442ef3d378cf664cbe",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 4,
+      "type": "markdown",
+      "source_sha256": "8d3792171400b5ded3c71cfc5196bf2312280362ebf73c58fbdc1cccbe9472f5",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 5,
+      "type": "code",
+      "source_sha256": "ec8812b9abd381048c767c55b221543a85353efb79d3f858d01d63876875d585",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 6,
+      "type": "markdown",
+      "source_sha256": "064413966ba09d660548c1dec25de61c96da75012e18bd915fef12115fab48d0",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 7,
+      "type": "code",
+      "source_sha256": "ee64161324f876002af0ef0f0a5f822d3d1817ed32ca8da0d3fca3e21deffcbf",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 8,
+      "type": "markdown",
+      "source_sha256": "aeb3525833953537d5df74b02c87edf4bd19f52cfb748ac1028e86d72cde5d0b",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 9,
+      "type": "code",
+      "source_sha256": "1d98a3592b275500be70f86a7661989945b15cf9619b95e8ed2bfcb1d6283778",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 10,
+      "type": "markdown",
+      "source_sha256": "29584dc785730c1bc870c5e564483947acd5cb135839ddf9b93d886b843e2040",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 11,
+      "type": "code",
+      "source_sha256": "be04a9673bc42759f44e3b33cf5e1a9d6f6a5d1b4a61c31311d4e1cf3e274a80",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 12,
+      "type": "markdown",
+      "source_sha256": "ed9d6f08044c0ff624152ff06acbc490931a4de31441ec7841ff1cb378942b2e",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 13,
+      "type": "code",
+      "source_sha256": "edb07bebaa491c45cf24f7468d4354bc49ad8adf4bd3a8e7d37f1d16dab3774f",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 14,
+      "type": "code",
+      "source_sha256": "43b2350ad892418568e119408c13b6ed177b95fe97873db460d747c87e5b31d8",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 15,
+      "type": "code",
+      "source_sha256": "ddacee0621ab34ae9a84e3d9506847f3f11b7248a8c986e0dfd83a2710e01020",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 16,
+      "type": "markdown",
+      "source_sha256": "d4ae400973594eb7335c350bdf736da689d61ab7bade63bf85f3128eca0266ba",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 17,
+      "type": "code",
+      "source_sha256": "666f317549d1275084b27bc0a23e758f1cac462afaae13b58355923cd1277ca7",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 18,
+      "type": "markdown",
+      "source_sha256": "178a2b9da340298a6043e86ab0b0412be2620695d7f88c5fb087bd477976517d",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 19,
+      "type": "code",
+      "source_sha256": "b0bccc7b79b23851b062db42c72a73d03680d1c6648eb40363552fa627d28378",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 20,
+      "type": "markdown",
+      "source_sha256": "faebdd34741d70be52bcd26f3ff9bae17ee5ce92a30d1e76ce24b4799f0d7996",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 21,
+      "type": "code",
+      "source_sha256": "d71f8fb5d1c35038f02cc6303a25626d272e1e0f0cb2c7a220bbe308717d740b",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 22,
+      "type": "markdown",
+      "source_sha256": "503c86f6dbabaf2bcbc1f62887f65d386ed93eec56fff5c68ec0420b11da750f",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 23,
+      "type": "code",
+      "source_sha256": "f2e5ca682e05ad7721fc0ae7b0dd81fed9b03cf84e13e531d81c72b23ff0b265",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 24,
+      "type": "markdown",
+      "source_sha256": "b9efd49de92edc804de72eedc288a63a5338bad4eedbc900ed3b6ce4af9de4d8",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 25,
+      "type": "code",
+      "source_sha256": "cf85f6337110b27433831c346aa247c39410d9a16d2b9dbdc7de874d5413e119",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 26,
+      "type": "markdown",
+      "source_sha256": "126a650d4b13a97ac543661219c9acdc96e7973cf4620eeebd5d17f7e24fad51",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 27,
+      "type": "code",
+      "source_sha256": "999133701aceafb0717e6ca00ed5c137e67d12d0d7cf27b939e50f8c6abe9fbb",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 28,
+      "type": "markdown",
+      "source_sha256": "453a11740f5e98bd62efe0bf63d69007b1a7591b0d7d21c1b2ff8ac682a381a6",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 29,
+      "type": "code",
+      "source_sha256": "34f21502313d3a869a8f52f8bb61a98d8cd7bd39ec9e6b7f5c9a9c529e6bee58",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 30,
+      "type": "markdown",
+      "source_sha256": "c74257a26faf7c4396f6e04228191854af1270a7049abf42c87d8d770a72f406",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 31,
+      "type": "code",
+      "source_sha256": "85a2a270d9b74261c30ee8b7d2996c3b73aae77a781e8b470d57db0f8f8ab3c3",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 32,
+      "type": "markdown",
+      "source_sha256": "6c0b208b71c3d904c019064daa94a16b14f6d8fdd23043de94ea083433550ec6",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 33,
+      "type": "code",
+      "source_sha256": "3f7f2c7414a0bbc429ef670d653a8f00c7ad9fee8912e1cd27b0765388410d6c",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 34,
+      "type": "markdown",
+      "source_sha256": "c59b83306a706bbd2961cb5632ad5e0e0ed2ec9caba6c0fa648dd83ec3b5f2d1",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 35,
+      "type": "code",
+      "source_sha256": "84c14dead97079ed4afe764ccc7b79bf9f90f07c48ef57b6e52459038c7a481b",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 36,
+      "type": "markdown",
+      "source_sha256": "448b4ed6d5212d6a135827165ee78e3ccc68606024c34e7a07fc3f853e3df919",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 37,
+      "type": "code",
+      "source_sha256": "b10467835c0d74d81fd0769e286a9d109740f7eb08a616a96394a5b29e5dc3ab",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 38,
+      "type": "markdown",
+      "source_sha256": "ca6ac07adbf87f900b2d67a916ccae9663acf65211e89ab9360502c8fe7d9bfd",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 39,
+      "type": "code",
+      "source_sha256": "b4b968d9b915826c528a388f41ae51e2b7c8a4428ed6b363a87aee25f51f937f",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 40,
+      "type": "markdown",
+      "source_sha256": "d4e4c3826dbbc2a2cedfff19dc22c528e62a5bda9eefa2fa338a2f911d6982cc",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 41,
+      "type": "code",
+      "source_sha256": "c50ef19e6b69df8ea491b22e2c534888035961464fddd38560fdaba20d281df8",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 42,
+      "type": "markdown",
+      "source_sha256": "af2c713ed303219fc6c4b3636adca1797fbee17496abd3075d4a34c3b9ffc414",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 43,
+      "type": "code",
+      "source_sha256": "c9cda7f33ef7cc355149cdba122d1a139ca68128fdd088ac5598b37a5860a67a",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 44,
+      "type": "markdown",
+      "source_sha256": "1647453dfaaa44772036c926f03b1e630c00d0b2a16d92ff0d935df86a3bed0e",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 45,
+      "type": "code",
+      "source_sha256": "c45fc2fc2bf8546317cd4b7ad9ca2e432c9a8418881c14731ea0fe407cd342ab",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 46,
+      "type": "markdown",
+      "source_sha256": "77bc6746e62e232705b9fd3a0750386872630c9b3d2a8bf98ca2da41831bb6bf",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 47,
+      "type": "code",
+      "source_sha256": "31210aac3a5ea653977bc804d0b299f3dcf8a187c6b1fe74bbe40b708f308811",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 48,
+      "type": "markdown",
+      "source_sha256": "0f2a3fa58ba8bb5b3e43b9f36dbefbb9a2300c66b012007c74b90ce2cf1967c4",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 49,
+      "type": "code",
+      "source_sha256": "dc9b3f343b429701991da1d8ea59ab382c65ca84f27084831cb9453b2e580b50",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 50,
+      "type": "markdown",
+      "source_sha256": "5e53d307757f5bcc678d9a624f766a08f6df470692af9c5f60e64e2fcb9cc3d0",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 51,
+      "type": "code",
+      "source_sha256": "2dfe922e3b86ad277e466fb8ffe467af1f2ab92acf8fc226c595027ae040f8ae",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 52,
+      "type": "markdown",
+      "source_sha256": "ae0e24c7f4077e442b94a294cd295a5a66153d1cdba076126838b2d639bb13db",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 53,
+      "type": "code",
+      "source_sha256": "85d9638cfb3e49dddf6a1fe62fbcc9c7242be9057381df2620a7ded00c6def86",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 54,
+      "type": "markdown",
+      "source_sha256": "1282f71582ba8dc36717c14acbad4d0fe1320e9075b1e276446438868ae6e27b",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 55,
+      "type": "code",
+      "source_sha256": "a785a52f0a1c01f9bf0c87553fbb8cc0725edd98acc665a9cb52577e786310f3",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 56,
+      "type": "markdown",
+      "source_sha256": "876231511f8c80b57b38e73d336b9fc88f38a4cdc9a941ad7ae37220fa8a344d",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 57,
+      "type": "code",
+      "source_sha256": "ec33539c85bd7e98a743090f79f1a8fc65fabdadcc94fda1fa6098df0290c660",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 58,
+      "type": "code",
+      "source_sha256": "97c24a87d2610e18f69968857d5f5a34686f43090bbbcd94891606ec8b341dfb",
+      "targets": [],
+      "category": "preparation"
+    },
+    {
+      "cell": 59,
+      "type": "markdown",
+      "source_sha256": "96bee33abb7702b7b43e34c10e875d36db524fd7f85c58a695e60537237097c2",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 60,
+      "type": "markdown",
+      "source_sha256": "dbf912893907e11f2fed41e98ac9176ff59c95209ca8cb3798e2edfd1b8e42d3",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 61,
+      "type": "code",
+      "source_sha256": "60b4cccd29a3db3c497be4ed43fac8992fa0aa07f1fe35d4df00f94556fd086a",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 62,
+      "type": "markdown",
+      "source_sha256": "e71196d4f8fb031327c57b3aea3408883098ed6307ac8b719da6e846f878d695",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 63,
+      "type": "code",
+      "source_sha256": "98ed4610ac3f7c66997e16a986daa6a97929ace74b2bb2ec0263a56b93378ef1",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 64,
+      "type": "code",
+      "source_sha256": "38e67d56997ebec022602a3f331591a96638881f3156e180a5a3845f300cc8b1",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 65,
+      "type": "code",
+      "source_sha256": "7e576aab74a3287c21f34fcb7f2a332ff61911152196c594c73fe737dae636a9",
+      "targets": [
+        "group-matrices"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 66,
+      "type": "markdown",
+      "source_sha256": "19f11b29435211837ded3a311bc56ed7d91891f1c6f863ce3a9cd4d8741a879e",
+      "targets": [
+        "coefficients"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 67,
+      "type": "markdown",
+      "source_sha256": "f3e7f632393dc9d01df0706cfbabf95d0e18c58bc663fc13f2dec8cc5700d528",
+      "targets": [
+        "coefficients"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 68,
+      "type": "code",
+      "source_sha256": "8d18bb21ab618ed18fd321108270174b045e0d73fed507893801fd1a4dca7bdf",
+      "targets": [
+        "coefficients"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 69,
+      "type": "markdown",
+      "source_sha256": "c47b73cb615a298e276f5e879bd4854e402cb69a6f3e718dfa5e898b03bea56c",
+      "targets": [
+        "coefficients"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 70,
+      "type": "code",
+      "source_sha256": "e1276f9fcd70d0c225c37e95d12a2830f524a7ce144f683da1a4ad6009d98bdb",
+      "targets": [
+        "coefficients"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 71,
+      "type": "code",
+      "source_sha256": "121f60ebb6e234b85ce5507bceab293eef4fc1b23b2f8ee429e45fe8692356d2",
+      "targets": [
+        "coefficients"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 72,
+      "type": "markdown",
+      "source_sha256": "dd793d70a42f1d9627d3efd64bfa6f63c47f3bf2a5770d63483aadb2d530db26",
+      "targets": [],
+      "category": "unimplemented TODO (outside v1)"
+    },
+    {
+      "cell": 73,
+      "type": "markdown",
+      "source_sha256": "5404445771062a32c03b90317a8b4a2436ee6470e1daf5c05dcb2122b2de30f0",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 74,
+      "type": "markdown",
+      "source_sha256": "d8be49b6abdf8213969f9a005f399338abfe08f98a60e19d68bb98deaed86977",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 75,
+      "type": "code",
+      "source_sha256": "f42794eff997ed34facf21d04b733f08c0043fa9edb8485c1ef6c2200d8c4ac7",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 76,
+      "type": "markdown",
+      "source_sha256": "6ac30c1feafe6b2d1af86b3453e37d0f0d98a8789238f350ab27af9677ea345f",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 77,
+      "type": "code",
+      "source_sha256": "ffbf9a6f990960b86b688ec50a6da1f905f7072759ae64ddef72b0b3a7bf17a0",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 78,
+      "type": "markdown",
+      "source_sha256": "3ffaf309b1a3fe9722d27b2c7321ebba14e93334cfed64fac87c40b4c914440e",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 79,
+      "type": "code",
+      "source_sha256": "a35238dbe9457fcbce1166ec2d027af058708a84339117dc9669b5464a07a0ce",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 80,
+      "type": "markdown",
+      "source_sha256": "e7c5505c76d6075abeee6bbe283c223b1994f96e35eec5a78e674c31f9e6f21c",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 81,
+      "type": "code",
+      "source_sha256": "2e64d9a77b39e0f327d17e8509bfbebb3b2fc1156b42e744788672aec52e1328",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 82,
+      "type": "code",
+      "source_sha256": "3db8963972c3cba40f8b5ef29974e0d0ac43969294816fb32bc91b18919f8438",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 83,
+      "type": "code",
+      "source_sha256": "3327a25b2c346531b0515118ddfbee3e918496ea814cdec9698ec7b8ea73c50d",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 84,
+      "type": "code",
+      "source_sha256": "1a9b39e90de5ba636364f7792a56fbe0190fb405ee2f9fdda97562fde9000736",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 85,
+      "type": "code",
+      "source_sha256": "67ecf95a45b7da98cb2632dd42209c9dcfb57083a2903cc66420bbb88903b68a",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 86,
+      "type": "code",
+      "source_sha256": "0a4e0322c47e82371145035d5dbb9776405259ed0fc15f2b06102dd021cf7e6e",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 87,
+      "type": "code",
+      "source_sha256": "4b617ace911df7179d46c094904f563da3390ae4f5561a42cc34aa0722723935",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 88,
+      "type": "code",
+      "source_sha256": "f9cd959ad3f0893f08284875c9e9d34a99c83ab2eacbcc1b09c9d9504470a249",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 89,
+      "type": "code",
+      "source_sha256": "2290934bacec3e081203a63ffa58177c01ca9c1f9c8acf4354942fda2952a67b",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 90,
+      "type": "markdown",
+      "source_sha256": "fe151bfb236a8540efa79d9e70edde469c1809d35317142bde82efb03acf4e53",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 91,
+      "type": "code",
+      "source_sha256": "b1b72f1c6c9612b26581b4217a1d8ee029fa32183fd35f62da9cd19f5694e5ae",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 92,
+      "type": "code",
+      "source_sha256": "5ae4b55b43b2725f84c9159c008a3c50ac9774ddef3850a4bca332153e7dcf85",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 93,
+      "type": "markdown",
+      "source_sha256": "35c5d80da3a96886022e24739c9fc857e017a903cefbeb8bd0d2115c882ba335",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 94,
+      "type": "code",
+      "source_sha256": "9465233d7d812c1c279b29781e27610a2d31af36b744bbfa1e2e20b3b896424f",
+      "targets": [
+        "network-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 95,
+      "type": "markdown",
+      "source_sha256": "db0e62937f940e44f73a1b1aa08e7adb2b544f40e110584640c12bd30f7b1f0f",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 96,
+      "type": "markdown",
+      "source_sha256": "12c55a43af70238186b7f16a83536669b420dfda6062dc37f13cb772c7e28711",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 97,
+      "type": "code",
+      "source_sha256": "8f7b3476cda9b67a81631aa1cd83702d091f3c1983671fc4cc4e96fdc5d7447e",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 98,
+      "type": "markdown",
+      "source_sha256": "c2565ac2a1994ceef5bf288c57de46b1664f1dba588fe3157b7aea574a456e72",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 99,
+      "type": "code",
+      "source_sha256": "f327aba8d873ec0ace18c959146b08ee5caad33f6e01fcfc3bb06bea48dcec9e",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 100,
+      "type": "code",
+      "source_sha256": "564fd9e037ad3dc4ca97cca3c331d67909f7184ab1c1217d5106cc98682260bd",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 101,
+      "type": "markdown",
+      "source_sha256": "158029d277c0573f9f716f8578978d531556d2d69b851ff76ddb574157d46e11",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 102,
+      "type": "code",
+      "source_sha256": "9afde032848b92fdf9d5ae6cb5220f2eba43b9ab753249ff44875eb2dec851b7",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 103,
+      "type": "code",
+      "source_sha256": "262d52dca6985b8d49f14c5effe0702c85eb8607ccf4c1343f6032a3fdc27543",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 104,
+      "type": "code",
+      "source_sha256": "ec5857e5822467b5ecde9cd59af3fad9b6aca54535001383665be56d1165f370",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 105,
+      "type": "code",
+      "source_sha256": "0cef9c0297a17848b1925e02ed4b0e69686040f432f556c30425239d833c9549",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 106,
+      "type": "code",
+      "source_sha256": "5514d87d5fb6f4bd8dbf048be635900eee7d191a612cdb09044bd5e2c9b04fbd",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 107,
+      "type": "code",
+      "source_sha256": "efe81c822e686cd401a5c2d45a84a44233b164559ae094f33bd987f60f2b77ea",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 108,
+      "type": "code",
+      "source_sha256": "50c97a0c5f77a6c63219b6796938b617d547a427ded12223947b4b78f31a8d63",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 109,
+      "type": "markdown",
+      "source_sha256": "175dc5c2c822b0991e48362e4c0b1c32b0a65590fd594f30da3667d1f1d7dac2",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 110,
+      "type": "code",
+      "source_sha256": "8e7c9b39e7825244e61dda88eb55b03e5d0f2a1e54a97487a392a8eff9437985",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 111,
+      "type": "code",
+      "source_sha256": "2a9487c12f3c88da19ca1d3508d7a67a55d5ba7131f8c5e3a20e14ba4990a5c7",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 112,
+      "type": "code",
+      "source_sha256": "1354265a3a04ab0b0cc185cbe72a25317636af4c06f14ebe797996f8fc70cddd",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 113,
+      "type": "code",
+      "source_sha256": "d7c8d7cc2c5d995171c6edd67cce2d155aef5494190ca87ed6433d717ef52ad0",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 114,
+      "type": "code",
+      "source_sha256": "6b4f0914c316496414572c637bd6a53beba6cf02195cc20f0af1b9589020f897",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 115,
+      "type": "code",
+      "source_sha256": "9bab63dc14df87f1e7cc3e58430ec5dbc629364f6e2535bb1bf66952724056ba",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 116,
+      "type": "markdown",
+      "source_sha256": "bac9eac54a4a67c5a5fcae444ea3b0a8263250295663bdabe27ccf1f5ae1e12c",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 117,
+      "type": "code",
+      "source_sha256": "d318228c7403282e68a7da0068e115221a7e216d42ffdadeea618744cb2278eb",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 118,
+      "type": "markdown",
+      "source_sha256": "b60094f89932dbf6e2cb7b39afdfebc61f9eadfdfd3bc3c9766db77d9ebb57a0",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 119,
+      "type": "code",
+      "source_sha256": "ea7a285e5f5116d7c88aed5b34d746faa6d3b4caf44040406f69f8bc2b0685e5",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 120,
+      "type": "code",
+      "source_sha256": "9cbb52b263768f6e4cdcf7d9a8751fa6677ebe6ffd519a0af8f33474a52e8655",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 121,
+      "type": "markdown",
+      "source_sha256": "f193a71ef7ae2aa1ead99cb8d1dcc6b0a1671f6786e0cf920559d6ace0b2fd1f",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 122,
+      "type": "code",
+      "source_sha256": "dcd86872b3a5f01daf70266e6dfa651e804cb3e28972c035b6e66fedd6447c9a",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 123,
+      "type": "code",
+      "source_sha256": "92891c3058465ff570bf3e0d64d8e9c9623938a3903965dd26045ceaa4a6a4d6",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 124,
+      "type": "code",
+      "source_sha256": "d3ed3ce7da2a4dd8ded9909b0cf492938c83ce58292029d559f0f5b6bc6f2c4f",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 125,
+      "type": "code",
+      "source_sha256": "a3a458bc67c15b634b62848e403df230747f175e77899529af2e3449d190f755",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 126,
+      "type": "code",
+      "source_sha256": "0981e4d2868d33c388592aa44e055e17f09da9117327f642abf088370e8ff21b",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 127,
+      "type": "markdown",
+      "source_sha256": "8932a44a73ef10643e1259103eeb0d2fbe7b595e70382a7d88e523ea43953128",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 128,
+      "type": "code",
+      "source_sha256": "b20fb2d0a81c60108ae7ab2a67dfe3c3eccb2d8bd58c1cf41d5b45885c52900d",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 129,
+      "type": "code",
+      "source_sha256": "728004e2dd1db09bd78bb8d2ac3e640d616d18e999259095ee8b52795174d78e",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 130,
+      "type": "markdown",
+      "source_sha256": "eac2379c01d842cbee2fd10d460af0debdc795069cc9ced4604c9898e21a023e",
+      "targets": [
+        "hierarchies-moca"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 131,
+      "type": "code",
+      "source_sha256": "51dfb61cabe3b234f969f92cd6f817518a7bb27f334654198352827d80b62c50",
+      "targets": [
+        "hierarchies-moca"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 132,
+      "type": "code",
+      "source_sha256": "195b8a7aa09f044feec3680b4da940878b1efa420eeccf85705acaed3598be0d",
+      "targets": [
+        "hierarchies-moca"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 133,
+      "type": "markdown",
+      "source_sha256": "20647c7027e0f3989eef7a7fbcd19e09604956919e7dad64ea885314ba41f768",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 134,
+      "type": "markdown",
+      "source_sha256": "8eb7c6b6a5d6f2fdde499794c894e55c2880c67aad35448f557f1ea9c7c930fa",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 135,
+      "type": "code",
+      "source_sha256": "e82683ae5471f51100283d65bd253a0ee3f6e844fc2a46ccc855ac3deaaf44f2",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 136,
+      "type": "code",
+      "source_sha256": "fc59013a3312068b44d4e3b86cb9310c63088d3c71b1d2f6e32555d68f54c84e",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 137,
+      "type": "markdown",
+      "source_sha256": "37bb1decd13a9e8629a7e6b2df21a594d89c279a999fdd3a1ed65aec1210e6f5",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 138,
+      "type": "code",
+      "source_sha256": "78023b65988c98fe68b4d0545832738a8d0d64ea31135cf576c0a63ec950352b",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 139,
+      "type": "code",
+      "source_sha256": "c8022019c6e5177c8a398718127a86024feef2e7fbc0e8c23d7e362a96a3d36f",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 140,
+      "type": "code",
+      "source_sha256": "5a356a5ff91c5151e3c14bfb65edbfb9683b46cf7d05d2fb0eebf2897d1a50bb",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 141,
+      "type": "code",
+      "source_sha256": "45beabe2553f45ddab035d1e619f85000c1d5b2bbeb4a64176f6785df7c771d3",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 142,
+      "type": "code",
+      "source_sha256": "495223206576d7121c0759c6cf52c5d8b25b7b8c05941e491cbfe6a41a80a8ee",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 143,
+      "type": "code",
+      "source_sha256": "4ff54e2e04a54407eaa733b80847a5f6fc6be42000686c8193efa56a912c9364",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 144,
+      "type": "code",
+      "source_sha256": "122b52e6f01004e021ee5ee3c2e6973cf9a2c48f6b62a19d2332848ce7c06f3f",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 145,
+      "type": "code",
+      "source_sha256": "57ae07a04ac03d06d46412db8992e00624a46692e5cf46d13ef4d10404cf24f4",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 146,
+      "type": "code",
+      "source_sha256": "c6deee25c64b8b8c6da61edfe58fc1db075890c576018752aeabe19fc437d930",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 147,
+      "type": "code",
+      "source_sha256": "b5b3043bfacadbae6407f7f26893a0d04f0ed08062e3582ed6192ff64a522c5f",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 148,
+      "type": "code",
+      "source_sha256": "feb3693597f359441a02552867dd709c78e33de3c20c20d4602ee266de1ca854",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 149,
+      "type": "code",
+      "source_sha256": "e17ffe67c96f7f13ff15909412b7f11411dee98d311d0804e5c8b25d67a7f819",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 150,
+      "type": "code",
+      "source_sha256": "db7a08a359d57dfc65b0f14aeac6ea9ac7851a3b6cc245d7b21c07460f38d9a6",
+      "targets": [
+        "regional-effects"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 151,
+      "type": "markdown",
+      "source_sha256": "f58948399c8e069bd6e0a4281565f50c8eb2a833559c5242899d187d2aa28359",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 152,
+      "type": "code",
+      "source_sha256": "b4cd5f11db3d5f39ae7269535851732a3891d1ec54545cce48135b02be04ae2c",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 153,
+      "type": "markdown",
+      "source_sha256": "ff2ab76e5d5b3fb7cc32659b947b0cdca29371ccaadfa9a73f5fdd0daa703b0f",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 154,
+      "type": "markdown",
+      "source_sha256": "62bfc1b61a40f62cdf1cb37aa7c3256ca1ee9d3b541c2bb635bdc6a09dd770f4",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 155,
+      "type": "code",
+      "source_sha256": "a181ebfb01152e83ec97dac36278b2ec07dcbace45ee85756a0e017a14f43a74",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 156,
+      "type": "markdown",
+      "source_sha256": "471c10ca89371eaaaa7c7bd467bcc4c1f1d2d448aea3ad0a2a6fabbc26487d1b",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 157,
+      "type": "code",
+      "source_sha256": "5233740ef1d2fecf76e30a52ad6f532aee4df863665b38b4737d8172fc69bee2",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 158,
+      "type": "markdown",
+      "source_sha256": "0334a4cf92355b76d2092242840773be07ea3e9b1e066ad2ae26cede0d15f7a3",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 159,
+      "type": "code",
+      "source_sha256": "a785a52f0a1c01f9bf0c87553fbb8cc0725edd98acc665a9cb52577e786310f3",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 160,
+      "type": "markdown",
+      "source_sha256": "4f49318bbccd918d25888d026722fbfedff069238956f19cd088ef1fb51952a6",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 161,
+      "type": "code",
+      "source_sha256": "82a974b0d6f7bcfe5ec9833278a849ff416178c35b0ea2afd2ce741e085ffbe4",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 162,
+      "type": "code",
+      "source_sha256": "9e163c1845710b7a0dcb4ae9b239d859d0ab223acbb5356e620e3e846fd31215",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 163,
+      "type": "code",
+      "source_sha256": "e00ffba59af18d0e85ac42362ded9eeed100b1b1ca9f63c2632903cf1b3189e7",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 164,
+      "type": "code",
+      "source_sha256": "69ad277ab96549f6e05ab2d159ad24d214cf3cff1e2840de1fc6e7c703ac6763",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 165,
+      "type": "markdown",
+      "source_sha256": "dde19be358516c003903efd66b2afe9b4f4d0517dadc782ce297952f65923df2",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 166,
+      "type": "code",
+      "source_sha256": "aecb62481fcafd9cb33f1abd3d683af5984f433aad288c8fe222e1bdd145c84b",
+      "targets": [
+        "taxa-four-dx",
+        "taxa-four-mmse",
+        "taxa-six-dx",
+        "taxa-six-mmse"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 167,
+      "type": "markdown",
+      "source_sha256": "9fffc8448e5ba5cd4cebad4ae15fdf0a6ab1e05848c01675af98966bbf7f450d",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 168,
+      "type": "markdown",
+      "source_sha256": "1cd4cbc77a45c173dfc542a8ee626076f484954592ca329e0c6301d58b0c3a46",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 169,
+      "type": "code",
+      "source_sha256": "c8af5695d3792f5da66149c4374a54035d6fc8296a1dbfc6169ae2dc30f08eaa",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 170,
+      "type": "markdown",
+      "source_sha256": "0f572c9c9af9c9d31c5343d52219153447a0706c204a9c872be58dbafb13aa4f",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 171,
+      "type": "code",
+      "source_sha256": "3d798d8c5db0fc5ebe87373cd7ba04b07d976b804e57e88b047ead64e1bbc0ea",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 172,
+      "type": "code",
+      "source_sha256": "69d502381e18604cb1e1760be7ee132b34ce93e925e8a625a00f60d17896d06b",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 173,
+      "type": "markdown",
+      "source_sha256": "49f8cf8e31f2d67219d623d71b45a94028b1df86313961ab741b3ab624bf028b",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 174,
+      "type": "code",
+      "source_sha256": "3499e6ae26c271bedce3b0dfb3a4886d46a47d3658cd72870cb7c57c1961b7fd",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 175,
+      "type": "code",
+      "source_sha256": "c102e00a61961ec34764ccac0b32f11f1720f5ddc18b6ec6ed86a5dda7f4050a",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 176,
+      "type": "code",
+      "source_sha256": "2f7a16175aeef087231645c78e06523ff860f14b405199390dfcdae5f1ef5279",
+      "targets": [
+        "hierarchies"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 177,
+      "type": "markdown",
+      "source_sha256": "4dc32fa851554a9b4397e785a5120da1541b741026f9ec73e2bdcfd877495e98",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 178,
+      "type": "markdown",
+      "source_sha256": "df5d91de8689f9c897dc4e3a1fd82ae6ee02fd78b5b0eae753438f3b067f6ee3",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 179,
+      "type": "code",
+      "source_sha256": "70b59094a3e931e8ea63b22935841badc219678ec4ec98dc54d712fc69e86a1b",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 180,
+      "type": "markdown",
+      "source_sha256": "602215da0e2e2358fdf5323d2e5ea224c00dd7d6cdbc892424304309c3d9653d",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 181,
+      "type": "code",
+      "source_sha256": "50fbc6fae5971e7ea017743f3c42ee2ef4f858f863a6bbd1565205c5184d13be",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 182,
+      "type": "markdown",
+      "source_sha256": "8154e4b813dde82fe7d40316e05127cb5a94d96652e2bbbeafda567c2b52e2ca",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 183,
+      "type": "code",
+      "source_sha256": "5bc14833949c38d9ba20d3d9183c4b22b7db5b0d8335b1af304098d8e47e4a57",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 184,
+      "type": "code",
+      "source_sha256": "3a5720a60070a9f43860e1e5e460587e44027778a826718ee52fa081b999861d",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 185,
+      "type": "code",
+      "source_sha256": "77f4ea9ddcfeb3ddaafd7b19dab81a22ccbdcaacd9a782eb28b68f0cd6cc614b",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 186,
+      "type": "code",
+      "source_sha256": "70becd7098c2131d54329eedc2aba21e57339ecbc5557f10c54d1c502ea3de2c",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 187,
+      "type": "code",
+      "source_sha256": "730f8da585541f200a1c63f4ae0a50a08c32af9f98055b82516193d6e297610d",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 188,
+      "type": "code",
+      "source_sha256": "f3a4556a0eb49653f1e27b67065b194fb616c51574f47259fdba3c38baebcb5b",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 189,
+      "type": "markdown",
+      "source_sha256": "fd1b30e460a136aab25534fffb616500ff4d47e6bdcb29dad57611bb67ae9d0d",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 190,
+      "type": "code",
+      "source_sha256": "b192df2cfc6c10b5d21f3cf13075009d94a02cfb343c90ddda1d53df42882f6c",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 191,
+      "type": "code",
+      "source_sha256": "6d735d25cead4ac7f2422e45a1dd5e0c23a1ed3fdd5681d91e70a138d3c19d89",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 192,
+      "type": "markdown",
+      "source_sha256": "f95fd8463b7dd436bd17b1a6a4cc761dbd68bde644561d17ff43c30b5a82f758",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 193,
+      "type": "code",
+      "source_sha256": "e2894e6d7da129f5461250baab6c725ea41d2232914e1d496789f14d585a292a",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 194,
+      "type": "markdown",
+      "source_sha256": "2124c46bd342779ffac50162b897c554f92fe55d94462e9f2c1508e809dee3e9",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 195,
+      "type": "code",
+      "source_sha256": "991b88e68e945bd6ac45f759b93c613dc9be2cac676c6cc01559a5ec66d06f4b",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 196,
+      "type": "code",
+      "source_sha256": "c66837dbfa1875802a824768fb1b1a7994a99a272c7d89159b084bea40ba72a9",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 197,
+      "type": "markdown",
+      "source_sha256": "8287af698e5d79cafba68a5eea6b342b53337a9a33d9e0dfd4c5e93632af2a1d",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 198,
+      "type": "code",
+      "source_sha256": "07032124f2ffd5663744765627804e173dfb98a2df985d9613142025426c4a85",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 199,
+      "type": "code",
+      "source_sha256": "c66837dbfa1875802a824768fb1b1a7994a99a272c7d89159b084bea40ba72a9",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 200,
+      "type": "markdown",
+      "source_sha256": "98e2b238b438cd88bf359076a5e876cf9a4284fdb096d25eb8f5ac61171c87e1",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 201,
+      "type": "code",
+      "source_sha256": "e172a2d5ff0d1d438811d67c93cc05f70cf3289ab7784b096821cea70d850fdf",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 202,
+      "type": "code",
+      "source_sha256": "276c9186861da7734dbdac57f91687ecf9bce65a65c86a5f8c866718b1041113",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 203,
+      "type": "markdown",
+      "source_sha256": "6f8771264a490d059dd2f1eba80645cb1a25190253c032769b98f46b383ef3df",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 204,
+      "type": "markdown",
+      "source_sha256": "5807d8bb3b86c5085249a948224d1bcf27fcee7d8fa5476cb276ed1d5b7db9b1",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 205,
+      "type": "code",
+      "source_sha256": "8e8aa6a83ee77950da198a07ccd6aafd7c57daabcd0b4fa74cf796a98340f464",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 206,
+      "type": "code",
+      "source_sha256": "6a24d86d4cfb87d04854f25347e6c27b1f043978e99525293da1926d7d14ba06",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 207,
+      "type": "markdown",
+      "source_sha256": "cd04e036258c2d5d8b749e3faf8d7b51ff01e6f308b240adbb1817179c2039dd",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 208,
+      "type": "code",
+      "source_sha256": "5169fb6b365cd543897e7ae31fc1c79036d8a3c4aca588adf0d735b9790dbbe4",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 209,
+      "type": "markdown",
+      "source_sha256": "8780e68588baf9bde4d3517f611a2de85f4775bfc8399426019dde993aec0b4c",
+      "targets": [
+        "cn-reference"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 210,
+      "type": "markdown",
+      "source_sha256": "f998cb5642c5feda751539c88f773a9445e61ba17c5b9bdeae23ce3633a24957",
+      "targets": [
+        "lda"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 211,
+      "type": "code",
+      "source_sha256": "46501cda1581b648f12449be02b5906f922864947a992cdb3366388c83a687e3",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 212,
+      "type": "code",
+      "source_sha256": "47d12af7539993fccaaed982aabc4f74b458d3f8181714ba08f535f828f9c0b7",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 213,
+      "type": "code",
+      "source_sha256": "9bcfb2602be9b5202d617890fc510538afbc29c8ef4fdf444136d1fa77419cc2",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 214,
+      "type": "code",
+      "source_sha256": "4fac692692e8444f1a5ac93554834bf71ba9d06200b7137627497f0e4d43d513",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 215,
+      "type": "code",
+      "source_sha256": "bdfba93ef74216c9e015a45ad49350159fb1bfdb52ebd28bda94f89a5a545cec",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 216,
+      "type": "code",
+      "source_sha256": "da65fd8c0aaad58b99a8c67ec1086ef3a1f3e809e78adbf8cfd3c018eee5599b",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 217,
+      "type": "code",
+      "source_sha256": "fb102907f6f22dc11f64b12f8cd154fe60dc49bcd47f6fdb7f4a4c2382d01a85",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 218,
+      "type": "code",
+      "source_sha256": "789f54eba56d162771009d7b4b68d202ccc763f7c5f1379a0d54e3ddcb1959f2",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 219,
+      "type": "code",
+      "source_sha256": "d35ae85d3902c783b7e6a485d72f7d5dc2c4247a93bb4f3154e8aaf2a413042d",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 220,
+      "type": "code",
+      "source_sha256": "d8eee14802755ecf3e403d8a8243c3394e08a7cd3a5fe07591ab5fb72ddb8e9b",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 221,
+      "type": "code",
+      "source_sha256": "01fd3db6fe19499c035704e1fc7c6f4b019b564efb9636503427afb55e1682c3",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 222,
+      "type": "code",
+      "source_sha256": "2681735f20edb377b90d244387a17641ba5f57a55d94b824a861125b7a77e9c0",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 223,
+      "type": "code",
+      "source_sha256": "15415c4058e20d0791a22e09b490a825a2561ed5c360e4d26e96cdf259a2892c",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 224,
+      "type": "code",
+      "source_sha256": "80c3bd7f8aea05862b5bd161a9b8d918e9bf600df83fbb2ee4c8e59ce8517a71",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 225,
+      "type": "code",
+      "source_sha256": "edcace5bd720f80dcc5b182298e79978a11a6aa23ee028d18f6ac382f7646174",
+      "targets": [
+        "lda"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 226,
+      "type": "markdown",
+      "source_sha256": "61445a069abb6cc247362360c6920004a21dbe8bf56bb1d13df9255d2e04fc75",
+      "targets": [
+        "lda"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 227,
+      "type": "markdown",
+      "source_sha256": "8ed163d60d267d061725f216f761c31dca0ff3c9090be72e64c295c132a34e6d",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 228,
+      "type": "code",
+      "source_sha256": "2cd83f25ffbaff33a22f155afe3256d5c1b3696c1ae42527786b94cc430154db",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 229,
+      "type": "code",
+      "source_sha256": "bdfba93ef74216c9e015a45ad49350159fb1bfdb52ebd28bda94f89a5a545cec",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 230,
+      "type": "code",
+      "source_sha256": "cc119bde0f0ad7a8f920cd63b7f5a77936f8f25d7c32c8aae69a7e8202f62ff8",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 231,
+      "type": "code",
+      "source_sha256": "bce05ee08c76cef50d93cfd0b3e3d3ab51c7e0e88af6e0729a1e50ac2840ab57",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 232,
+      "type": "code",
+      "source_sha256": "ac2f7bf469e03fd35d6c5480a35542f169316c6a163a6da00c0f9ce963f250a8",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 233,
+      "type": "code",
+      "source_sha256": "bfdfd16aa3116b9c110b080b7115d536e56b2ea7950b8d71585c65b8440dd8a8",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 234,
+      "type": "code",
+      "source_sha256": "6117b93b5cb950f5349566cab632b46c748de13f6f34d73da84b9e1a5521a23e",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 235,
+      "type": "code",
+      "source_sha256": "9478444fd2ad7b89be99e9a92392ea0a8d4cca1d7d2b40f3924a466efa309c33",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 236,
+      "type": "code",
+      "source_sha256": "becc6156b8fde2c53e1a73ea803726238d63a54ed5e9c7adead7a624aed5792c",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 237,
+      "type": "markdown",
+      "source_sha256": "4c12472d266829552f07e42b15976691bd93af2bbc52c938bf00b9b5edfed8ad",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 238,
+      "type": "markdown",
+      "source_sha256": "da979b0807823679ffe3d57c74f75e0a35a0c4e0981f65f961650e536e86f26d",
+      "targets": [
+        "heldout-hierarchy"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 239,
+      "type": "markdown",
+      "source_sha256": "8b79c515a239535a12d0059bc88046d250092d2d8a006196674b6c0848a37d30",
+      "targets": [
+        "alterations"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 240,
+      "type": "code",
+      "source_sha256": "0dc0ec65f472900199941ef96ab7aa1c8a4e24cbc38dcdd3dabb3490d16695d6",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 241,
+      "type": "code",
+      "source_sha256": "2dba370d18172853fd2ffbb61d5dd0aad02764ce2c893f182cdc01b4966600d9",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 242,
+      "type": "code",
+      "source_sha256": "d03ff3757c20ea34a9d8c19f790e2c72a917961c73519138f31d340e54d4b305",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 243,
+      "type": "code",
+      "source_sha256": "2e52435c8cb3d209974a5f9ca95c69be957a2672a936c1e5ada7e2a495bdcc3f",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 244,
+      "type": "code",
+      "source_sha256": "d47a6d942fa99d54586ab9224ed3e6024afe4746d2fe534a9c03bb8808b872a0",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 245,
+      "type": "code",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "targets": [
+        "alterations"
+      ],
+      "category": "empty cell"
+    },
+    {
+      "cell": 246,
+      "type": "code",
+      "source_sha256": "72aade84efe59c97d1a2ad3231bf342123388371e878dacd042af19aac1ce533",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 247,
+      "type": "code",
+      "source_sha256": "3cc7c92b794873083770c10e507ed30c09ab7bc8c4d3d4a29e6618265f279ce3",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 248,
+      "type": "code",
+      "source_sha256": "0749e82f27b57f226585574ba943027d5c5179ed9070fbd3ef5a01577348243b",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 249,
+      "type": "code",
+      "source_sha256": "034a69bf5d96f8a804b139e7338ab4cb195344d1d087cea5fa90d83da266cf34",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 250,
+      "type": "code",
+      "source_sha256": "def2f89dd4dba06729d076cb96e96b5e3c3c66a50aba8034e933c8f78efc9b63",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 251,
+      "type": "code",
+      "source_sha256": "a5c26e6a9c67e89a7d5c2d31fd43bc4b69beaf90cb519c8526bd8995137489dd",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 252,
+      "type": "code",
+      "source_sha256": "8e004a2ec225eac263a5a052a20bd19d4b779b4437e95c3ce22c4a8874e17b9f",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 253,
+      "type": "code",
+      "source_sha256": "fe9b3b56acbcb7f8b534d261dc577b039d9c0bd6d185451b9b2667fc9b2d0342",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 254,
+      "type": "code",
+      "source_sha256": "49889fd57ac98b8c8d1b64928dbf722ff4a0ac27f511b21eaab61150574429c9",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 255,
+      "type": "code",
+      "source_sha256": "9a3ae11a56413d31b7ea618fbf36b02e505f49d674d12a3efffd9563d34e4e29",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 256,
+      "type": "markdown",
+      "source_sha256": "fa13d327c0bc18e01b622b6eefe1c4ae5743e705ddb36462b9f7c87d290eb637",
+      "targets": [
+        "alterations"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 257,
+      "type": "code",
+      "source_sha256": "85e62969dbaf504ec9f2108a8a2941160b4aefc42353ed386d16c494bd2bd640",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 258,
+      "type": "code",
+      "source_sha256": "6287fddc3625e4bc4eaf045146307234a5ac70370aca6774e58808461764affb",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 259,
+      "type": "code",
+      "source_sha256": "44c04b4d3cdb9df53b5d4246ddb611d2c3cbf64737b50b45309652ade09cf4bf",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 260,
+      "type": "code",
+      "source_sha256": "15381cf9c65c5f3ac5209a23a744e246437fd05aa24e28845bfa0c5976fd0805",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 261,
+      "type": "code",
+      "source_sha256": "f3ebd827dc68863f8a96f1661f19f4665ff5e39384f8c370efb55de7280396fb",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 262,
+      "type": "code",
+      "source_sha256": "bf1a84ac93935c09951e8498f81233cb9f505642065c10b73588e986ecdea8b8",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 263,
+      "type": "code",
+      "source_sha256": "05111aee56635ebe08068ce25901cd2cd87d233831dab1379b7943839337b304",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 264,
+      "type": "code",
+      "source_sha256": "35de3a1f245ccbcbd7ebc9393db2d438cbf4a114fe9b1ff4c4ef01475dde1c15",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 265,
+      "type": "code",
+      "source_sha256": "1bb09043f7604e8aec22a15f11e3ef24df7b0b1de86219a59fed18fff34089bc",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 266,
+      "type": "code",
+      "source_sha256": "7c377a41f912ee2ba08b731e4aca0025408a5c5e3586e4325827b7b18608fae3",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 267,
+      "type": "code",
+      "source_sha256": "a6ef1e364628f8c28bf0c604b1d356e5034419f809d4351fd5509ef6d66f3f8d",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 268,
+      "type": "code",
+      "source_sha256": "7719041007e6ea7cc6ea74080fff41aa1cf981094c97262944831a9d1e2eed8b",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 269,
+      "type": "code",
+      "source_sha256": "865aa2ca4aac55503f5d45d5141bdbaaafbcd93f38770f9ba87698cb68b62766",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 270,
+      "type": "code",
+      "source_sha256": "27226b39c9939362d696e3ffe3ea121a9e917b2d6df3a7e9833ae60183c7871c",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 271,
+      "type": "code",
+      "source_sha256": "88b34cf64bc9ad54fb45898fe388dd5ef9bd73dfca27bb50fbd13f99eb240381",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 272,
+      "type": "markdown",
+      "source_sha256": "25db22293b0371e0238c4e066d87855fd2b22676ffd6aa7fb762728cf9e9c4f3",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 273,
+      "type": "code",
+      "source_sha256": "e8befa908da3ddfa145419212d6339e6767d10adbc684083ce7eab04209064fa",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 274,
+      "type": "code",
+      "source_sha256": "97d6c3b28d003079964d7a4846e01e1b6b35c6851eeaa0ea5346db6bc85f61f9",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 275,
+      "type": "code",
+      "source_sha256": "90f10d0917cce7f4086e901476e0bbd2bfafca2c4c8bdd78adda248abf307211",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 276,
+      "type": "code",
+      "source_sha256": "ea7a285e5f5116d7c88aed5b34d746faa6d3b4caf44040406f69f8bc2b0685e5",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 277,
+      "type": "code",
+      "source_sha256": "d482e566c81da24d7aceb48989ef84530edb7abd7fc911eecab0f981b8f67594",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 278,
+      "type": "code",
+      "source_sha256": "a0cd8f0c21c4046f84d30594048df72c43fc1e7405b1385f4b4803ce0168264c",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 279,
+      "type": "code",
+      "source_sha256": "ab559b5a337ba378b71649026b2e90d7441d156e386c2a71a4546d63d242197c",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 280,
+      "type": "code",
+      "source_sha256": "a08a0fcbdeafd3c1b3a4b495b9a9c9d96850f08946b52bc0622347d3b6e73b78",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 281,
+      "type": "code",
+      "source_sha256": "84ea75f67b16d92434a2ac9833992fcbdbe20b9e11e40c9ec44a5097bd7973ca",
+      "targets": [
+        "longitudinal"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 282,
+      "type": "code",
+      "source_sha256": "4c96468ebdaa8118e1fbf7a3f7f10ae6afb89823cac9f92ba8bb71c297371a41",
+      "targets": [
+        "longitudinal-tdmi-ratio"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 283,
+      "type": "code",
+      "source_sha256": "9f854ca25af6ed877187cc2717eae9325e48f4b0167284d3a3b3e25d4198ebff",
+      "targets": [
+        "longitudinal-tdmi-ratio"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 284,
+      "type": "code",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "targets": [
+        "longitudinal-tdmi-ratio"
+      ],
+      "category": "empty cell"
+    },
+    {
+      "cell": 285,
+      "type": "markdown",
+      "source_sha256": "fb307aa0ef88997f2357fafbbce6dcd8b880bd8f589efe5ba2e36fd421b8cd49",
+      "targets": [
+        "alterations"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 286,
+      "type": "code",
+      "source_sha256": "619eb54dfdb9b50d3d2f431bcfb7fad21437a1d661847754a947f0ab04c22778",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 287,
+      "type": "code",
+      "source_sha256": "a98057fe35fe07352959b698855e4586bbf1a43e9518fa049fe7f8df5af11928",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 288,
+      "type": "code",
+      "source_sha256": "39313669ecb103c7a9a337684ee90fb5df4bd8a2200fa8e99a3f6cca4bd5eea9",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 289,
+      "type": "code",
+      "source_sha256": "a73ddfbf542927fa76fc5cd8d1aa68b3f05ab63f82df3b043f505f4cd0817bab",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 290,
+      "type": "code",
+      "source_sha256": "42212701a156244f8e5ce5daa546fc9b39b8f51f8cbe52928e2774ee326b855e",
+      "targets": [
+        "alterations"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 291,
+      "type": "code",
+      "source_sha256": "e8d2cd161f069681f6b3d4a63d856f3493a0ede5a116bdfc61af5b59634acb8b",
+      "targets": [
+        "tdmi"
+      ],
+      "category": "scalar metadata export (preparation and result bundles)"
+    },
+    {
+      "cell": 292,
+      "type": "code",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "targets": [
+        "tdmi"
+      ],
+      "category": "empty cell"
+    },
+    {
+      "cell": 293,
+      "type": "markdown",
+      "source_sha256": "852d350cd16d6c4a70aa6aa6b105a0dae612ce74e18eada78f785190e60fd7b0",
+      "targets": [
+        "tdmi"
+      ],
+      "category": "analysis documentation"
+    },
+    {
+      "cell": 294,
+      "type": "code",
+      "source_sha256": "39c2d19648cfe3089ec809a3a90b6074cbb0e1d37d89cd6cf1c154fee7082dcd",
+      "targets": [
+        "tdmi"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 295,
+      "type": "code",
+      "source_sha256": "ae7123c6d8895f987438a3c4c4389e0138f373197a0f1f82fb78021451447ab5",
+      "targets": [
+        "tdmi"
+      ],
+      "category": "implemented or consolidated analysis"
+    },
+    {
+      "cell": 296,
+      "type": "code",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "targets": [
+        "tdmi"
+      ],
+      "category": "empty cell"
+    }
+  ]
+}
