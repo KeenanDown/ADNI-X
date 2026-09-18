@@ -38,7 +38,7 @@ adni-x plot group-matrices.rtr --results /path/to/results/RUN_ID/group-matrices
 adni-x plot all --results /path/to/results/RUN_ID
 ```
 
-Replotting needs **only the result bundle**, not raw data or preparation caches. Numerical outputs have stable names inside immutable bundles. New SVG and 300-dpi PNG files have informative names and their actual UTC creation timestamp. Every plot has a JSON provenance sidecar.
+Replotting needs **only the result bundle**, not raw data or preparation caches. Numerical outputs have stable names inside immutable bundles. New editable SVG, PDF and 300-dpi PNG files have informative names and their actual UTC creation timestamp. Every plot has a JSON provenance sidecar. See the [manuscript plotting guide](docs/plotting.md) for the original-notebook styling and how to refresh an existing run.
 
 ## Defaults
 
