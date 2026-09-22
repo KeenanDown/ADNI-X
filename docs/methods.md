@@ -2,7 +2,9 @@
 
 ## Cohorts and transformations
 
-Length eligibility is checked before selecting the maximum canonical visit month. Confound completeness is checked afterwards. Thus a newer long scan can be replaced by an older length-eligible scan, but missing confounds in the selected eligible scan do not cause a silent older-visit substitution. All eligible visits are retained for longitudinal use. Multiple eligible same-visit runs are excluded until resolved.
+Length eligibility (150–250 retained time points inclusive) and acquisition repetition time (2.875–3.150 seconds inclusive) are checked before selecting the maximum canonical visit month. TR is read from the BOLD JSON identified by each S8b tensor's `source_bold` metadata. Missing or invalid metadata excludes the scan. The TR requirement was added following the user's post hoc acquisition review, which identified a 197-point scan with TR 6.015 seconds. This is an acquisition eligibility change, not a change to PhiID computation.
+
+Confound completeness is checked afterwards. Thus a newer scan failing either length or TR eligibility can be replaced by an older scan satisfying both rules, but missing confounds in the selected eligible scan do not cause a silent older-visit substitution. All eligible visits are retained for longitudinal use. Multiple eligible same-visit runs are excluded until resolved. As a consequence, applying this rule to all candidate visits may differ from simply removing one row from an existing selected cohort; review the new inclusion audit and cohort counts.
 
 The primary adjusted cohort includes CN/MCI/AD and complete confounds. Raw TDMI retains selected diagnosed participants without requiring confound completeness. Missing MMSE/MoCA affects only the corresponding cognitive analysis. These cohort distinctions are exported with every result.
 
@@ -50,4 +52,3 @@ Longitudinal outputs are descriptive, using raw atoms and raw TDMI, plus an opt-
 ## Explicit historical options
 
 Set these only in a separately named sensitivity configuration: `transform.age: baseline`, `adjustment: intercept` (legacy uncentred intercept addback) or `residuals`, `exclude_diagonal: false`, `regional_axis: 0`, `network_edges: upper`, `statistics.welch: false`, or `statistics.correction: none`. These settings remain visible in provenance. `network_edges: upper` changes directed information summaries and is not a claim of symmetry. No single legacy switch reproduces arbitrary stale notebook state or restores known coding errors.
-

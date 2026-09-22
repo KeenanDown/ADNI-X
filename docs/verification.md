@@ -1,4 +1,12 @@
-# Local verification — 2026-09-16
+# Local verification
+
+## Acquisition TR update — 2026-09-22
+
+**167 tests passed** after adding the default inclusive 2.875–3.150-second repetition-time filter. New coverage verifies exact boundaries (and immediately adjacent floating-point values), the 197-point/6.015-second outlier, exclusion before latest/baseline/specified-visit selection, exclusion from all retained visits, relative/absolute source links, `.nii`/`.nii.gz` metadata lookup, tensor symlinks, missing/invalid/unreadable metadata, conflicting source identities, invalid configuration and cache invalidation after metadata/settings changes. Synthetic fixtures now include S8b source links and BOLD acquisition JSONs. The full existing numerical and saved-result rendering suite also passed.
+
+No new real-data run or HPC changes were performed for this update. Existing runs must be recomputed to apply the new cohort rule; source-free replotting preserves the cohort of the original saved result.
+
+## Initial implementation — 2026-09-16
 
 The implementation was verified on macOS arm64, Python 3.12.14, using `requirements.lock`.
 

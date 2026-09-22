@@ -448,7 +448,7 @@ def _render(bundle, recipe):
             axes[1].scatter(pts.n_time, pts.value, label=group, color=color(group, gi), s=14, alpha=.5)
         c = bundle.manifest["configuration"]["cohort"]
         axes[0].axvspan(c["time_min"], c["time_max"], color="gray", alpha=.15)
-        axes[0].set(xlabel="Retained time points", ylabel="Scans", title="Inventory length audit (protocol unverified)")
+        axes[0].set(xlabel="Retained time points", ylabel="Scans", title="Inventory length audit (all discovered scans)")
         axes[1].set(xlabel="Retained time points", ylabel="Raw global TDMI", title="Selected eligible scans")
         for ax in axes: ax.legend()
     elif kind == "prediction_distribution":

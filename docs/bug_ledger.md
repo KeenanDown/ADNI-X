@@ -28,3 +28,4 @@ Cell numbers below are zero-based in the supplied 297-cell notebook. Historical 
 
 Method changes are documented separately from coding bugs in `methods.md`. The agreed 150–250 range also excludes 140-point scans; it must not be described as verified Advanced-only exclusion.
 
+On 2026-09-22, following the user's post hoc acquisition-metadata review, an inclusive 2.875–3.150-second TR requirement was added before visit selection. Length alone had admitted a 197-point scan with TR 6.015 seconds. TR now comes from the tensor sidecar's linked BOLD JSON; unresolved metadata excludes a scan. Both sidecars and configured bounds participate in cache identity. This is a cohort-method revision; existing saved results must be recomputed, not merely replotted.

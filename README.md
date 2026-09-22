@@ -43,7 +43,7 @@ Replotting needs **only the result bundle**, not raw data or preparation caches.
 ## Defaults
 
 - 232 parcels, MMI, no TDMI division.
-- Inclusive **150–250 retained time points**, then latest eligible scan per participant. This excludes shorter scans too and is **not a verified Basic/Advanced protocol classifier**.
+- Inclusive **150–250 retained time points** and **2.875–3.150-second repetition time**, then latest eligible scan per participant. TR comes from the BOLD JSON linked by the tensor sidecar; missing or invalid acquisition metadata excludes the scan. These checks do not establish a Basic/Advanced protocol classification.
 - Confounds: sex, education, visit age (`AGE + Years_bl`) and ICV. Missing ICV may be recovered from FreeSurfer; otherwise use complete cases after visit selection, with no older-visit substitution.
 - Adjustment preserves the fitting cohort's mean. Self-connections are excluded; both off-diagonal directions are retained; regional sums use axis 1.
 - Welch tests, two-sided α=.05, BH-FDR, seed 42, 10,000 resamples/permutations.

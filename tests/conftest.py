@@ -1,5 +1,6 @@
 from dataclasses import replace
 from pathlib import Path
+import json
 import numpy as np
 import pandas as pd
 import pytest
@@ -31,6 +32,10 @@ def make_dataset(root, per_group=8):
                 tensor[:, :, 15] -= gi*.015*np.arange(1, p + 1)[:, None]
                 tensor[np.arange(p), np.arange(p)] = 100  # detect accidental self-edge inclusion
                 savemat(tensor_dir / f"{name}_desc-phiidtensor.mat", {"PhiIDTensor": tensor})
+                bold_name = f"sub-{subject}_ses-M{month:03d}_task-rest_bold"
+                (tensor_dir / f"{name}_desc-phiidtensor.json").write_text(
+                    json.dumps({"source_bold": bold_name + ".nii.gz"}))
+                (tensor_dir / f"{bold_name}.json").write_text(json.dumps({"RepetitionTime": 3.0}))
                 savemat(series_dir / f"{name}_ROI_activity.mat", {"activity": rng.normal(size=(p, 200))})
                 records.append({"PTID": f"001_S_{n:04d}", "VISCODE": "bl" if not month else "m12",
                                 "DX": group, "PTGENDER": "Female" if j % 2 else "Male", "PTEDUCAT": education,
@@ -51,4 +56,3 @@ def config(tmp_path):
 def prepared(tmp_path_factory):
     from adni_x.preparation import prepare
     return prepare(make_dataset(tmp_path_factory.mktemp("prepared")))
-

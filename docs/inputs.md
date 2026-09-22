@@ -14,6 +14,16 @@ Subject/session identifiers come from BIDS-style `sub-…` / `ses-…` entities.
 
 Original series default to `*ExtSchaefer232_ROI_activity.mat`, excluding Gaussian-copula and correlation-index companions. Exactly one real numeric 2-D matrix must have exactly one dimension equal to P. Specify `series_variable` if multiple arrays qualify. A square P×P matrix cannot establish a time axis and is rejected.
 
+## Acquisition repetition time
+
+Every tensor requires its adjacent `.json` sidecar with a `source_bold` string. For a tensor symlink, the sidecar is read beside its resolved target. Resolve relative `source_bold` paths against that sidecar's directory; absolute paths are also accepted. Replace the linked `.nii.gz` or `.nii` suffix with `.json` and read its numeric `RepetitionTime` in **seconds**. BOLD image data are not loaded. There is no inferred TR, alternate-scan lookup, NIfTI-header fallback or BIDS inheritance search. If relocated metadata still point to inaccessible sources, fix the copied input layout before running.
+
+Both `cohort.tr_min_seconds: 2.875` and `cohort.tr_max_seconds: 3.150` are inclusive. Comparisons use the recorded value without rounding or tolerance. Both length and TR eligibility precede latest/baseline/specified-visit selection and determine which visits enter longitudinal analyses. A scan with 197 time points and TR 6.015 seconds passes the length check but is excluded as `above_tr_window`.
+
+The inventory preserves `TR_seconds`, `tensor_json`, `source_bold`, `bold_json`, `tr_status` and `tr_detail`; retained cohort tables carry these columns into result bundles. `tr_status: ok` means the metadata were readable and valid, **not** that TR passed the configured range. `reason` records the first eligibility failure, with separate `below_tr_window` and `above_tr_window` reasons. Missing/unreadable sidecars, missing/invalid TR and conflicting source identifiers have distinct reasons. Positive finite JSON numbers are required; strings and booleans are rejected. Missing metadata never silently pass the filter. Available subject/session/run/acquisition entities must not conflict between tensor and source BOLD.
+
+Both JSON files are content-hashed as preparation dependencies; missing/unreadable metadata states are recorded too. Changing, removing or repairing sidecars, changing `source_bold`, or changing TR bounds invalidates affected preparation/results. No raw NIfTI hash or access is needed for this check. This enforces the specified TR requirement; it does not independently verify every acquisition-protocol parameter.
+
 ## Clinical records
 
 Required join columns: `PTID`, `VISCODE`. `001_S_0001` and `ADNI001S0001` map to the same subject; `bl`, `m12`, `M012` map to canonical visits. Unsupported visit codes are reported. Exactly repeated clinical records are accepted and counted; conflicting records are excluded unless a resolution identifies the row.
@@ -50,4 +60,3 @@ Unknown tensor references and duplicate resolution rows are errors. Manual choic
 The cache contains `inventory.csv`, `visits.csv`, `selected.csv`, `subjects.csv`, the ordered atlas, raw/adjusted disk-backed arrays, reduced regional/network arrays, design coefficients and references, normalisation counts and provenance. No pickle is required. Arrays are float64. Global and within-network means use the defined connection mask; a missing included edge propagates into its affected aggregate rather than quietly changing its denominator.
 
 Source files are content-hashed. Cache validation reads checksums, so a cache hit still performs input/integrity I/O, but does not repeat regression or analysis. This deliberately prioritises reproducibility over trusting filename dates.
-

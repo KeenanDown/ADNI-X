@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import json
 import re
 import h5py
 import numpy as np
@@ -12,6 +13,62 @@ from .config import ensure_config
 from .provenance import file_hash, digest
 
 SCAN_ENTITIES = ("task", "acq", "run", "echo", "rec", "dir")
+
+
+def acquisition_metadata(tensor):
+    """Follow S8b's explicit source_bold link; BOLD RepetitionTime is in seconds.
+
+    Return an audit even on failure. Never infer TR from series length or another
+    scan, and never load the BOLD image. Paths are also cache dependencies.
+    """
+    sidecar = Path(tensor).resolve().with_suffix(".json")
+    row = {"tensor_json": str(sidecar), "source_bold": "", "bold_json": "",
+           "TR_seconds": np.nan, "tr_status": "", "tr_detail": ""}
+
+    def read_json(path, kind):
+        try:
+            value = json.loads(path.read_text())
+        except FileNotFoundError as e:
+            raise ValueError(f"missing_{kind}") from e
+        except (OSError, UnicodeError, ValueError) as e:
+            raise ValueError(f"unreadable_{kind}") from e
+        if not isinstance(value, dict):
+            raise ValueError(f"invalid_{kind}")
+        return value
+
+    try:
+        metadata = read_json(sidecar, "tensor_json")
+        source = metadata.get("source_bold")
+        if not isinstance(source, str) or not source.strip():
+            raise ValueError("missing_or_invalid_source_bold")
+        source = (sidecar.parent / source).resolve()
+        row["source_bold"] = str(source)
+        if source.name.endswith(".nii.gz"):
+            bold_json = source.with_name(source.name[:-7] + ".json")
+        elif source.suffix == ".nii":
+            bold_json = source.with_suffix(".json")
+        else:
+            raise ValueError("invalid_source_bold_extension")
+        row["bold_json"] = str(bold_json)
+        # Reject a link to a different participant, visit or conflicting run.
+        try:
+            expected, actual = entities(tensor), entities(source)
+        except ValueError as e:
+            raise ValueError("invalid_source_bold_identity") from e
+        if any(expected[k] and actual[k] and expected[k] != actual[k]
+               for k in ("sub", "ses", *SCAN_ENTITIES)):
+            raise ValueError("conflicting_source_bold_identity")
+        metadata = read_json(bold_json, "bold_json")
+        if "RepetitionTime" not in metadata:
+            raise ValueError("missing_repetition_time")
+        tr = metadata["RepetitionTime"]
+        if isinstance(tr, bool) or not isinstance(tr, (int, float)) or not np.isfinite(tr) or tr <= 0:
+            raise ValueError("invalid_repetition_time")
+        row.update(TR_seconds=float(tr), tr_status="ok")
+    except (ValueError, OSError, RuntimeError) as e:
+        row["tr_status"] = str(e) if isinstance(e, ValueError) else "unreadable_source_bold_path"
+        row["tr_detail"] = str(e.__cause__ or e)
+    return row
 
 
 def subject_code(value):
@@ -182,6 +239,7 @@ class Inventory:
     atlas: pd.DataFrame
     sources: dict
     issues: list
+    tr_bounds: tuple[float, float] = (2.875, 3.150)
 
     def summary(self):
         df = self.scans
@@ -189,7 +247,11 @@ class Inventory:
                 "selected_scans": int(df.selected.sum()),
                 "exclusions": df.loc[~df.eligible, "reason"].value_counts().to_dict(),
                 "selected_groups": df.loc[df.selected, "group"].fillna("missing").value_counts().to_dict(),
-                "length_rule": "inclusive time-series-length filter; acquisition protocol is not verified",
+                "length_rule": "inclusive time-series-length filter; not a Basic/Advanced classifier",
+                "repetition_time_rule": {"min_seconds": self.tr_bounds[0], "max_seconds": self.tr_bounds[1],
+                                         "inclusive": True, "source": "source_bold JSON RepetitionTime",
+                                         "unresolved_metadata": "exclude", "applied_before_visit_selection": True},
+                "tr_metadata_statuses": df.tr_status.value_counts().to_dict(),
                 "issues": self.issues}
 
 
@@ -212,12 +274,26 @@ def source_files(config):
         raise ValueError("No tensor files match the configured atlas and estimator")
     stats = sorted(Path(inp.freesurfer).glob("sub-*/stats/aseg.stats")) if inp.freesurfer else []
     extra = [Path(inp.clinical), Path(inp.atlas)] + ([Path(inp.resolutions)] if inp.resolutions else [])
-    return tensors, series, sorted(set(tensors + series + stats + extra))
+    metadata_files = []
+    for path in tensors:
+        record = acquisition_metadata(path)
+        metadata_files.extend(Path(record[k]) for k in ("tensor_json", "bold_json") if record[k])
+    return tensors, series, sorted(set(tensors + series + stats + extra + metadata_files))
 
 
 def fingerprints(config):
     _, _, files = source_files(config)
-    return {str(p.resolve()): {"sha256": file_hash(p), "bytes": p.stat().st_size} for p in files}
+    result = {}
+    for p in files:
+        try:
+            result[str(p.resolve())] = {"sha256": file_hash(p), "bytes": p.stat().st_size}
+        except OSError as e:
+            # Missing/unreadable metadata excludes that scan, not the entire cohort.
+            # Include its state so later repairs invalidate the preparation cache.
+            if p.suffix != ".json":
+                raise
+            result[str(p.resolve())] = {"unavailable": type(e).__name__, "errno": e.errno}
+    return result
 
 
 def inventory(config, sources=None):
@@ -257,6 +333,7 @@ def inventory(config, sources=None):
         row = {"scan_id": digest(str(path.resolve()))[:20], "tensor_file": str(path.resolve()),
                "series_file": "", "n_time": np.nan, "eligible": False, "selected": False,
                "reason": "", "subject": "", "session": "", "month": np.nan, "group": np.nan}
+        row.update(acquisition_metadata(path))
         resolution = resolutions.get(str(path.resolve()), {})
         try:
             ent = entities(path)
@@ -296,6 +373,10 @@ def inventory(config, sources=None):
                 row["ICV"], row["ICV_source"] = etiv[ent["sub"]], "FreeSurfer_eTIV"
             if not c.time_min <= count <= c.time_max:
                 raise ValueError("below_length_window" if count < c.time_min else "above_length_window")
+            if row["tr_status"] != "ok":
+                raise ValueError(row["tr_status"])
+            if not c.tr_min_seconds <= row["TR_seconds"] <= c.tr_max_seconds:
+                raise ValueError("below_tr_window" if row["TR_seconds"] < c.tr_min_seconds else "above_tr_window")
             try:
                 read_tensor(path, config)
             except (ValueError, OSError, KeyError, TypeError) as e:
@@ -318,4 +399,5 @@ def inventory(config, sources=None):
         visit = "M000" if c.visit == "baseline" else session_code(c.visit)
         selected = eligible.index[eligible.session == visit]
     scans.loc[selected, "selected"] = True
-    return Inventory(scans, atlas, sources if sources is not None else fingerprints(config), issues)
+    return Inventory(scans, atlas, sources if sources is not None else fingerprints(config), issues,
+                     (c.tr_min_seconds, c.tr_max_seconds))
