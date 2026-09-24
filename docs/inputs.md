@@ -28,7 +28,7 @@ Both JSON files are content-hashed as preparation dependencies; missing/unreadab
 
 Required join columns: `PTID`, `VISCODE`. `001_S_0001` and `ADNI001S0001` map to the same subject; `bl`, `m12`, `M012` map to canonical visits. Unsupported visit codes are reported. Exactly repeated clinical records are accepted and counted; conflicting records are excluded unless a resolution identifies the row.
 
-Analysis fields are `DX`, `PTGENDER`, `PTEDUCAT`, `AGE`, `Years_bl`, `ICV`, `MMSE`, `MOCA`, `EXAMDATE`. `Years.bl` is accepted as an alias. Absent fields remain missing; they are not fabricated. `Dementia` is displayed as `AD`, while the original `DX` is retained. Unknown sex categories are missing. Cognitive scores outside integer 0–30 are not binned.
+Analysis fields are `DX`, `PTGENDER`, `PTEDUCAT`, `AGE`, `Years_bl`, `ICV`, `MMSE`, `MOCA`, `EXAMDATE`. `Years.bl` is accepted as an alias. Absent fields remain missing; they are not fabricated. `Dementia` is displayed as `AD`, while the original `DX` is retained. Unknown sex categories are missing. MoCA scores outside integer 0–30 are not binned. MoCA categories are 0–19, 20–28 and 29–30. MMSE is retained only as source metadata and is never categorised or used to group analyses.
 
 FreeSurfer recovery searches `sub-*/stats/aseg.stats` for EstimatedTotalIntraCranialVol. Only a positive, unambiguous subject-level estimate is used; no arbitrary value is chosen from conflicting estimates. The source of every usable ICV is recorded.
 

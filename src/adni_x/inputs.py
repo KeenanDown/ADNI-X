@@ -208,10 +208,9 @@ def clinical_table(path):
     df["education"] = df.PTEDUCAT
     df["visit_age"] = df.AGE + df.Years_bl
     df["EXAMDATE"] = pd.to_datetime(df.EXAMDATE, errors="coerce").dt.strftime("%Y-%m-%d")
-    for score, bins in (("MMSE", [-1, 19, 27, 30]), ("MOCA", [-1, 19, 28, 30])):
-        labels = ["0-19", "20-27", "28-30"] if score == "MMSE" else ["0-19", "20-28", "29-30"]
-        valid = df[score].where(df[score].between(0, 30) & (df[score] % 1 == 0))
-        df[f"{score}_category"] = pd.cut(valid, bins, labels=labels).astype("string")
+    valid_moca = df.MOCA.where(df.MOCA.between(0, 30) & (df.MOCA % 1 == 0))
+    df["MOCA_category"] = pd.cut(valid_moca, [-1, 19, 28, 30],
+                                  labels=["0-19", "20-28", "29-30"]).astype("string")
     return df, issues
 
 
@@ -247,6 +246,7 @@ class Inventory:
                 "selected_scans": int(df.selected.sum()),
                 "exclusions": df.loc[~df.eligible, "reason"].value_counts().to_dict(),
                 "selected_groups": df.loc[df.selected, "group"].fillna("missing").value_counts().to_dict(),
+                "selected_moca_categories": df.loc[df.selected].get("MOCA_category", pd.Series(dtype="object")).fillna("missing").value_counts().to_dict(),
                 "length_rule": "inclusive time-series-length filter; not a Basic/Advanced classifier",
                 "repetition_time_rule": {"min_seconds": self.tr_bounds[0], "max_seconds": self.tr_bounds[1],
                                          "inclusive": True, "source": "source_bold JSON RepetitionTime",
@@ -366,7 +366,7 @@ def inventory(config, sources=None):
             if len(unique) != 1:
                 raise ValueError("conflicting_clinical_records")
             cr = candidates_clin.iloc[0]
-            row.update({k: cr[k] for k in ("DX", "group", "sex", "education", "AGE", "Years_bl", "visit_age", "ICV", "MMSE", "MOCA", "MMSE_category", "MOCA_category", "EXAMDATE", "clinical_row")})
+            row.update({k: cr[k] for k in ("DX", "group", "sex", "education", "AGE", "Years_bl", "visit_age", "ICV", "MMSE", "MOCA", "MOCA_category", "EXAMDATE", "clinical_row")})
             row["clinical_duplicate_count"] = len(candidates_clin)
             row["ICV_source"] = "ADNIMERGE" if pd.notna(cr.ICV) else "missing"
             if pd.isna(cr.ICV) and ent["sub"] in etiv:

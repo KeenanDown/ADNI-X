@@ -160,6 +160,8 @@ def distributions(ax, df, value, groups=None):
 
 def _render(bundle, recipe):
     kind = recipe["kind"]
+    group_names = bundle.details.get("groups", list(GROUPS))
+    reference = bundle.details.get("reference_group", "CN")
     correction = bundle.manifest["configuration"]["statistics"]["correction"]
     threshold_name = "BH-FDR" if correction == "fdr_bh" else "uncorrected p threshold"
     if kind == "group_matrices":
@@ -170,7 +172,7 @@ def _render(bundle, recipe):
         if bundle.manifest["configuration"]["transform"]["exclude_diagonal"]:
             means[:, np.arange(len(atlas)), np.arange(len(atlas))] = np.nan
         edges = bundle.table("edges")
-        sub = edges.loc[(edges.atom == ATOMS[atom]) & (edges.group_a == "CN") & (edges.group_b == "AD")]
+        sub = edges.loc[(edges.atom == ATOMS[atom]) & (edges.group_a == group_names[0]) & (edges.group_b == group_names[-1])]
         difference = np.full((len(atlas), len(atlas)), np.nan)
         sig = sub.loc[sub.significant]
         difference[sig.parcel_i.to_numpy(int), sig.parcel_j.to_numpy(int)] = sig.difference
@@ -181,7 +183,7 @@ def _render(bundle, recipe):
         limits = (finite.min(), finite.max()) if len(finite) else None
         counts = bundle.table("group_counts").set_index("group")["n"].to_dict()
         first = None
-        for gi, group in enumerate(GROUPS):
+        for gi, group in enumerate(group_names):
             im = matrix(axes[gi], means[gi][np.ix_(order, order)],
                         f"{group} (n={counts.get(group, 0)})", limits=limits, colorbar=False)
             if first is None and im is not None:
@@ -189,7 +191,7 @@ def _render(bundle, recipe):
             axes[gi].set_title(axes[gi].get_title(), pad=15)
             bars(axes[gi], atlas.network_id.to_numpy()[order], sides="matrix")
         im = matrix(axes[3], difference[np.ix_(order, order)],
-                    f"Significant changes (AD − CN)\n{threshold_name}", diverging=True, colorbar=False)
+                    f"Significant changes ({group_names[-1]} − {group_names[0]})\n{threshold_name}", diverging=True, colorbar=False)
         axes[3].set_title(axes[3].get_title(), pad=15)
         bars(axes[3], atlas.network_id.to_numpy()[order], sides="matrix")
         if first is not None:
@@ -256,7 +258,7 @@ def _render(bundle, recipe):
     elif kind == "significance_strip":
         df = bundle.table("effects")
         atom = df.loc[df.atom == recipe["atom"]]
-        anchor = atom.loc[(atom.group_a == "CN") & (atom.group_b == "AD")].sort_values("difference", ascending=False, kind="stable")
+        anchor = atom.loc[(atom.group_a == group_names[0]) & (atom.group_b == group_names[-1])].sort_values("difference", ascending=False, kind="stable")
         sub = atom.loc[(atom.group_a == recipe["group_a"]) & (atom.group_b == recipe["group_b"])].set_index("parcel_index").reindex(anchor.parcel_index)
         fig, axes = grid(1, width=12, height=1.5, columns=1)
         ax = axes[0]
@@ -266,7 +268,7 @@ def _render(bundle, recipe):
         ax.imshow(rgba[None, :, :], aspect="auto", interpolation="nearest")
         ax.set_xticks([]); ax.set_yticks([]); clean_axes(ax)
         ax.set_title(f"{recipe['atom']} · {recipe['group_b']} − {recipe['group_a']} · {threshold_name}")
-        ax.set_xlabel("Parcels ordered by AD − CN; coloured = significant, white = not significant")
+        ax.set_xlabel(f"Parcels ordered by {group_names[-1]} − {group_names[0]}; coloured = significant, white = not significant")
         network_legend(fig, sub.network_id)
     elif kind == "network_counts":
         df = bundle.table("network_counts")
@@ -383,7 +385,7 @@ def _render(bundle, recipe):
             for gi, (group, sub) in enumerate(df.groupby("group", sort=False)):
                 ax.scatter(sub.rtr, sub.sts, label=group, color=color(group, gi), s=24, alpha=.4)
         ax.scatter([0], [0], color="gray", marker="x", s=28, zorder=5)
-        ax.set(xlabel="Redundancy: CN z-score", ylabel="Synergy: CN z-score")
+        ax.set(xlabel=f"Redundancy: {reference} z-score", ylabel=f"Synergy: {reference} z-score")
         ax.legend(fontsize=8, frameon=False)
         clean_axes(ax)
     elif kind == "pca":
@@ -405,7 +407,7 @@ def _render(bundle, recipe):
             extent = pcs.loc[valid, "PC1"].agg(["min", "max"]).to_numpy()
             line = centre + extent[:, None]*pc1
             axes[0].plot(line[:, 0], line[:, 1], "--", color="gray")
-            axes[0].set(xlabel="CN-reference redundancy", ylabel="CN-reference synergy",
+            axes[0].set(xlabel=f"{reference}-reference redundancy", ylabel=f"{reference}-reference synergy",
                         title=f"{group} · PC1 explains {model['explained_variance']:.1%}")
             projection = centre + pcs.PC1.to_numpy()[:, None]*pc1
             axes[1].scatter(projection[:, 0], projection[:, 1], c=colors, s=18)
@@ -432,7 +434,7 @@ def _render(bundle, recipe):
     elif kind == "group_distribution":
         df = bundle.table(recipe["table"])
         fig, axes = grid(1, width=6, height=5, columns=1)
-        distributions(axes[0], df, recipe["value"])
+        distributions(axes[0], df, recipe["value"], group_names)
         axes[0].legend(handles=[Line2D([], [], marker="D", linestyle="none", color="black",
                                       markerfacecolor="white", label="Group mean")], frameon=False)
         test = bundle.table("omnibus").query("primary == True").iloc[0]
@@ -440,8 +442,8 @@ def _render(bundle, recipe):
     elif kind == "lengths":
         audit, observations = bundle.table("length_audit"), bundle.table("observations")
         fig, axes = grid(2, columns=2, width=6, height=4.5)
-        for gi, group in enumerate(GROUPS):
-            sub = audit.loc[audit.group == group]
+        for gi, group in enumerate(group_names):
+            sub = audit.loc[audit[bundle.details.get("grouping_column", "group")] == group]
             counts = sub.groupby("n_time").size()
             axes[0].scatter(counts.index, counts.values, label=group, color=color(group, gi), s=25)
             pts = observations.loc[observations.group == group]
@@ -457,7 +459,7 @@ def _render(bundle, recipe):
         fig, axes = grid(len(splits), columns=3, width=4.5, height=3.5)
         for ax, split in zip(axes, splits):
             panel = df.loc[df.split == split]
-            groups = [g for g in GROUPS if g in panel.group.unique()]
+            groups = [g for g in group_names if g in panel.group.unique()]
             for gi, group in enumerate(groups):
                 vals = panel.loc[panel.group == group, recipe["value"]].to_numpy(float)
                 vals = vals[np.isfinite(vals)]
@@ -476,12 +478,12 @@ def _render(bundle, recipe):
             ax.invert_yaxis()
             ax.set_xlabel("Hierarchy correlation" if recipe["value"] == "correlation" else "LDA projection")
             clean_axes(ax)
-            ax.set_title({"train": "Training (in-sample)", "test": "Held-out test", "projection_only": "MCI projection only"}[split])
+            ax.set_title({"train": "Training (in-sample)", "test": "Held-out test", "projection_only": f"{group_names[1]} projection only"}[split])
     elif kind == "confusion":
         values = np.asarray(bundle.array("confusion"))
         fig, axes = grid(1, width=5, height=4.5, columns=1)
-        matrix(axes[0], values, "Held-out CN/AD predictions")
-        axes[0].set_xticks([0, 1], ["CN", "AD"]); axes[0].set_yticks([0, 1], ["CN", "AD"])
+        matrix(axes[0], values, f"Held-out {group_names[0]}/{group_names[-1]} predictions")
+        axes[0].set_xticks([0, 1], bundle.details.get("confusion_labels", ["CN", "AD"])); axes[0].set_yticks([0, 1], bundle.details.get("confusion_labels", ["CN", "AD"]))
         axes[0].set(xlabel="Predicted", ylabel="Observed")
         for i in range(2):
             for j in range(2): axes[0].text(j, i, str(values[i, j]), ha="center", va="center", color="white")
@@ -495,7 +497,7 @@ def _render(bundle, recipe):
             if panel.empty or not np.isfinite(panel["mean"]).any():
                 no_data(ax, "No valid dates/ages/values for this panel")
             else:
-                for gi, group in enumerate(GROUPS):
+                for gi, group in enumerate(group_names):
                     data = panel.loc[panel.group == group].sort_values("x")
                     ax.plot(data.x, data["mean"], ".-", label=group, color=color(group, gi), linewidth=1)
                 ax.legend(fontsize=8)
@@ -503,6 +505,9 @@ def _render(bundle, recipe):
             ax.set_xlabel(recipe["axis"].replace("_", " "), fontsize=8)
     else:
         raise ValueError(f"Unknown saved figure kind: {kind}")
+    if "grouping" in bundle.details:
+        label = "MoCA category" if bundle.details["grouping"] == "moca" else "Diagnosis"
+        fig.text(.005, .002, f"Grouping: {label}", ha="left", va="bottom", fontsize=7, color=".4")
     if bundle.manifest.get("exploratory"):
         fig.text(.995, .002, "Exploratory analysis", ha="right", va="bottom", fontsize=7, color=".4")
     return fig
@@ -530,9 +535,10 @@ def plot(figure, results):
             continue
         recipes = json.loads((path / "figures.json").read_text())
         # Derive a presentation-only recipe for old bundles, without resealing them.
-        if bundle.manifest["analysis_id"] == "coefficients" and not any(
-                r["id"] == "coefficients.combined" for r in recipes):
-            recipes.append({"id": "coefficients.combined", "kind": "coefficients", "combined": True})
+        analysis_id = bundle.manifest["analysis_id"]
+        if analysis_id in {"coefficients", "coefficients-moca"} and not any(
+                r["id"] == analysis_id + ".combined" for r in recipes):
+            recipes.append({"id": analysis_id + ".combined", "kind": "coefficients", "combined": True})
         for recipe in recipes:
             if figure != "all" and recipe["id"] != figure:
                 continue

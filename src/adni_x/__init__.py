@@ -13,9 +13,9 @@ def validate(config):
     return inventory(config)
 
 
-def run(analysis, config):
+def run(analysis, config, *, render=True, include_sensitivity=False):
     from .runner import run as impl
-    return impl(analysis, config)
+    return impl(analysis, config, render=render, include_sensitivity=include_sensitivity)
 
 
 def plot(figure, results):

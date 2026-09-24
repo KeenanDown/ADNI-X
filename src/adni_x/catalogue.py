@@ -1,9 +1,11 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import partial
+import re
 from . import analyses
 from .longitudinal import longitudinal
 from .prediction import lda, heldout_hierarchy
 from .constants import PAIRS
+from .preparation import target_id
 
 
 @dataclass(frozen=True)
@@ -16,6 +18,7 @@ class Analysis:
     exploratory: bool = False
     opt_in: bool = False
     dependency: str = "adjusted selected cohort"
+    grouping: str = "diagnosis"
 
 
 CATALOGUE = [
@@ -30,11 +33,9 @@ CATALOGUE = [
                    [f"regional-effects.{atom}.network-counts" for atom in ("rtr", "sts")])),
     Analysis("hierarchies", "Rank hierarchies, profiles and bootstrap correlations", "116-129,151-152,167-176", analyses.hierarchies,
              tuple(f"hierarchies.{m}" for m in ("hierarchy", "rtr", "sts", "rtr_deviation", "sts_deviation", "rtr_midpoint", "sts_midpoint", "correlations"))),
-    Analysis("hierarchies-moca", "MoCA-group regional hierarchies", "130-132", partial(analyses.hierarchies, grouping="MOCA_category"),
-             tuple(f"hierarchies-moca.{m}" for m in ("hierarchy", "rtr", "sts", "rtr_deviation", "sts_deviation", "rtr_midpoint", "sts_midpoint", "correlations")), True),
     *[Analysis(f"taxa-{size}-{group}", f"{size.title()} taxa by {group.upper()}", "153-166",
-               partial(analyses.taxa, six=size == "six", grouping="group" if group == "dx" else "MMSE_category"),
-               (f"taxa-{size}-{group}.panels",)) for size in ("four", "six") for group in ("dx", "mmse")],
+               partial(analyses.taxa, six=size == "six"),
+               (f"taxa-{size}-{group}.panels",)) for size in ("four", "six") for group in ("dx",)],
     Analysis("cn-reference", "CN-standardised regional comparisons, PCA and brain exports", "177-209", analyses.cn_reference,
              ("cn-reference.regions", "cn-reference.subjects", "cn-reference.MCI.networks", "cn-reference.AD.networks",
               "cn-reference.MCI.pca", "cn-reference.AD.pca")),
@@ -53,8 +54,32 @@ CATALOGUE = [
                    ("calendar_year", "years_since_first_eligible_scan", "years_since_ADNI_baseline", "visit_age", "rolling")),
              True, True, "all eligible raw visits; explicit ratio normalisation"),
     Analysis("tdmi", "Raw global TDMI, diagnosis comparisons and length audit", "291-296", analyses.tdmi,
-             ("tdmi.groups", "tdmi.lengths"), dependency="selected raw scans with diagnosis"),
+             ("tdmi.groups", "tdmi.lengths"), dependency="selected raw scans with analysis-group labels"),
 ]
+
+def _with_group(function, prepared, *, grouping):
+    return function(prepared.for_group(grouping))
+
+
+def _moca_figure(figure):
+    prefix, rest = figure.split(".", 1)
+    for diagnostic, category in zip(("CN", "MCI", "AD"), ("29-30", "20-28", "0-19")):
+        rest = re.sub(r"(?<![A-Za-z])" + diagnostic + r"(?![A-Za-z])", category, rest)
+    return target_id(prefix, "moca") + "." + rest
+
+
+# Every numerical family has an independently runnable counterpart. No MMSE targets.
+CATALOGUE = [item for base in CATALOGUE for item in (
+    base,
+    replace(base, id=target_id(base.id, "moca"),
+            description=base.description.replace("CN-standardised", "MoCA 29–30-standardised")
+                       .replace("CN/AD", "MoCA 29–30/0–19").replace("diagnosis", "MoCA")
+                       .replace("DX", "MoCA") + " (MoCA categories)",
+            function=partial(_with_group, base.function, grouping="moca"),
+            figures=tuple(_moca_figure(f) for f in base.figures), grouping="moca",
+            cells=base.cells + (",130-132" if base.id == "hierarchies" else ""),
+            exploratory=base.exploratory or base.id == "hierarchies")
+)]
 ANALYSES = {item.id: item for item in CATALOGUE}
 FIGURES = {figure: item.id for item in CATALOGUE for figure in item.figures}
 
@@ -62,4 +87,4 @@ FIGURES = {figure: item.id for item in CATALOGUE for figure in item.figures}
 def catalogue():
     return [{"id": a.id, "description": a.description, "notebook_cells_zero_based": a.cells,
              "figures": list(a.figures), "exploratory": a.exploratory, "opt_in": a.opt_in,
-             "preparation_dependency": a.dependency} for a in CATALOGUE]
+             "preparation_dependency": a.dependency, "grouping": a.grouping} for a in CATALOGUE]

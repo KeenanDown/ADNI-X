@@ -29,7 +29,7 @@ adni-x run group-matrices --config config.local.yaml
 adni-x run all --config config.local.yaml
 ```
 
-`run` produces numerical bundles and figures. Use `--no-plots` to compute only. The opt-in `longitudinal-tdmi-ratio` analysis is omitted by `all` unless `--include-sensitivity` is supplied; requesting that analysis by name is also explicit opt-in. All other implemented analyses are included, including exploratory ones.
+`run` produces numerical bundles and figures. Use `--no-plots` to compute only. The opt-in `longitudinal-tdmi-ratio` and `longitudinal-tdmi-ratio-moca` analyses are omitted by `all` unless `--include-sensitivity` is supplied; requesting that analysis by name is also explicit opt-in. All other implemented analyses are included, including exploratory ones.
 
 To regenerate just one figure, supply its saved analysis directory or the parent run directory:
 
@@ -42,6 +42,7 @@ Replotting needs **only the result bundle**, not raw data or preparation caches.
 
 ## Defaults
 
+- Every analysis family runs for **diagnosis (CN/MCI/AD)** and **MoCA category (29–30 / 20–28 / 0–19)** under `run all`: 26 default targets, plus two opt-in TDMI-ratio targets. MMSE categories are never calculated or used.
 - 232 parcels, MMI, no TDMI division.
 - Inclusive **150–250 retained time points** and **2.875–3.150-second repetition time**, then latest eligible scan per participant. TR comes from the BOLD JSON linked by the tensor sidecar; missing or invalid acquisition metadata excludes the scan. These checks do not establish a Basic/Advanced protocol classification.
 - Confounds: sex, education, visit age (`AGE + Years_bl`) and ICV. Missing ICV may be recovered from FreeSurfer; otherwise use complete cases after visit selection, with no older-visit substitution.
@@ -49,7 +50,9 @@ Replotting needs **only the result bundle**, not raw data or preparation caches.
 - Welch tests, two-sided α=.05, BH-FDR, seed 42, 10,000 resamples/permutations.
 - Prediction uses a stratified 75/25 participant split with training-only preprocessing.
 
-Raw TDMI uses all selected eligible participants with a diagnosis, including those lacking confounds. Adjusted analyses use their documented complete-case cohort. Longitudinal plots use all eligible visits. Each bundle contains cohort tables so these differences are visible.
+Each grouping has its own cohort and confound fit. Missing MoCA excludes a participant only from MoCA analyses; missing diagnosis excludes them only from diagnostic analyses. Missing grouping scores do not trigger selection of an older visit. Raw TDMI requires the relevant group label but not complete confounds; longitudinal plots use all eligible visits with that visit's label. Cohort exports preserve diagnosis in `group` and the active label in `analysis_group`. Observation tables use `group` for the active label and retain `diagnosis` and `MOCA_category` alongside it.
+
+Diagnostic target IDs remain unchanged. MoCA targets generally add `-moca`, for example `network-effects-moca`; the reference/PCA target is `moca-reference`, and taxa targets are `taxa-four-moca` and `taxa-six-moca`. A named target runs only that grouping; `run all` runs both. MoCA reference analyses use 29–30 as their reference, and MoCA prediction compares 29–30 against 0–19 with 20–28 projection-only. These score bands are not clinical diagnoses. Old MMSE target IDs are rejected rather than silently redirected.
 
 ## Python and notebook use
 
@@ -60,11 +63,11 @@ from adni_x.config import Config
 config = Config.load("config.local.yaml")
 audit = validate(config)
 prepared = prepare(config)
-report = run("hierarchies", config)
+report = run("all", config)  # diagnosis and MoCA; numerical results and figures
 figures = plot("hierarchies.hierarchy", report["path"])
 ```
 
-`notebooks/ADNI_X.ipynb` is a thin entry point to this API. Numerical analysis functions are also available in `adni_x.analyses`, `adni_x.prediction`, and `adni_x.longitudinal`; they accept a prepared dataset and return a `Result` containing tables, numeric arrays, figure recipes and metadata.
+`notebooks/ADNI_X.ipynb` is a thin entry point to this API. Numerical analysis functions are also available in `adni_x.analyses`, `adni_x.prediction`, and `adni_x.longitudinal`; they accept a prepared dataset (`prepared.for_group("moca")` for MoCA) and return a `Result` containing tables, numeric arrays, figure recipes and metadata.
 
 ## Documentation and verification
 
@@ -81,3 +84,5 @@ python -m build --no-isolation
 ```
 
 Tests use synthetic participants only. Real HPC tensor conventions, atlas identity and cohort counts must be checked in the pilot; passing local tests does not certify the real dataset. Dataset files, caches and participant-level results are ignored by Git. Do not commit them.
+
+Updating to this grouping workflow creates a new cache/run identity. Existing YAML files need no extra settings, but saved results must be recomputed to add the MoCA targets. Old result directories remain untouched.
