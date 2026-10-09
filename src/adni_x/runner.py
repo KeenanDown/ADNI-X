@@ -49,6 +49,7 @@ def run(analysis, config, *, render=True, include_sensitivity=False):
     if analysis == "all" and not include_sensitivity:
         report["opt_in_not_requested"] = [a.id for a in ANALYSES.values() if a.opt_in]
     for spec in chosen:
+        cohort = prepared.for_group(spec.grouping)
         destination = root / spec.id
         log.info("Computing %s", spec.id)
         try:
@@ -77,13 +78,14 @@ def run(analysis, config, *, render=True, include_sensitivity=False):
                     atomic_json(out / "figures.json", result.figures)
                     atomic_json(out / "details.json", result.metadata)
                     # Each bundle is self-contained for provenance and plotting.
-                    selected = prepared.table("selected")
+                    selected = cohort.table("selected")
                     selected.to_csv(out / "cohort_selected.csv", index=False)
-                    prepared.table("subjects").to_csv(out / "cohort_adjusted.csv", index=False)
+                    cohort.table("subjects").to_csv(out / "cohort_adjusted.csv", index=False)
                     if spec.dependency.startswith("all eligible"):
-                        prepared.table("visits").to_csv(out / "cohort_visits.csv", index=False)
+                        cohort.table("visits").to_csv(out / "cohort_visits.csv", index=False)
                     atomic_json(out / "preparation_audit.json", json.loads((prepared.path / "audit.json").read_text()))
-                    seal(out, {"kind": "analysis", "analysis_id": spec.id, "run_id": run_id, "status": status,
+                    seal(out, {"kind": "analysis", "analysis_id": spec.id, "grouping": spec.grouping,
+                               "groups": cohort.groups, "reference_group": cohort.groups[0], "run_id": run_id, "status": status,
                                "reason": reason, "created_at": utc_now(), "configuration": config.to_dict(),
                                "preparation_id": prep["cache_id"], "sources": prep["sources"],
                                "environment": environment(), "exploratory": spec.exploratory,

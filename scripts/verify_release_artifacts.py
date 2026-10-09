@@ -51,7 +51,7 @@ with contextlib.redirect_stdout(stream):
     except SystemExit as e: assert e.code == 0
 assert stream.getvalue().strip() == "ADNI-X 0.2.0"
 targets = {t["id"]: t for t in catalogue()}
-assert len(targets) == 22
+assert len(targets) == 32
 assert not targets["taxa-principal-moca"]["opt_in"]
 assert targets["taxa-six-mmse"]["opt_in"]
 X = np.column_stack([np.ones(8), np.arange(8)])

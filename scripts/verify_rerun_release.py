@@ -52,6 +52,10 @@ def synthetic_inputs(root, parcels):
                 tensor[np.arange(parcels), np.arange(parcels)] = 0
                 suffix = "-CCS" if estimator == "ccs" else ""
                 savemat(tensors/f"{prefix}_desc{suffix}-phiidtensor.mat", {"PhiIDTensor": tensor})
+                bold_name = f"sub-ADNI001S{subject:04d}_ses-M000_task-rest_bold"
+                (tensors/f"{prefix}_desc{suffix}-phiidtensor.json").write_text(
+                    json.dumps({"source_bold": bold_name + ".nii.gz"}))
+                (tensors/f"{bold_name}.json").write_text(json.dumps({"RepetitionTime": 3.0}))
             savemat(series/f"{prefix}_ROI_activity.mat", {"activity": rng.normal(size=(parcels, 200))})
             records.append({"PTID": f"001_S_{subject:04d}", "VISCODE": "bl", "DX": group,
                             "PTGENDER": "Male" if male else "Female", "PTEDUCAT": education,
@@ -64,6 +68,7 @@ def synthetic_inputs(root, parcels):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--no-figures", action="store_true", help="Keep only aggregate numerical checks")
     args = parser.parse_args()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -98,10 +103,11 @@ def main():
                     assert (edges.parcel_i < edges.parcel_j).all()
                     assert all(len(sub) == expected for _, sub in edges.groupby(["atom", "group_a", "group_b"]))
                     checks[target+"_symmetry"] = json.loads((bundle/"details.json").read_text())["symmetry"]
-                inference = pd.read_csv(Path(report["targets"]["coefficients"]["path"])/"inference.csv")
-                assert len(inference) == 2*expected*4
-                assert set(inference.status) == {"ok"}
-                checks["coefficient_tests"] = len(inference)
+                for target in ("coefficients", "coefficients-moca"):
+                    inference = pd.read_csv(Path(report["targets"][target]["path"])/"inference.csv")
+                    assert len(inference) == 2*expected*4
+                    assert set(inference.status) == {"ok"}
+                    checks["coefficient_tests" + ("_moca" if target.endswith("-moca") else "")] = len(inference)
                 selected = ["taxa-principal-dx.panels", "taxa-principal-moca.panels",
                             "network-effects.MCI-vs-CN.cohens_d.all-atoms", "network-effects.MCI-vs-CN.cohens_d.rtr-sts",
                             "hierarchies.sts_deviation", "hierarchies-moca.sts_deviation",
@@ -109,7 +115,7 @@ def main():
                             "coefficients.rtr.significant", "coefficients.combined.significant"]
                 # Inspect representative exports from both atlas sizes and the
                 # CCS route, without keeping the large temporary datasets.
-                if name in ("232-mmi", "116-ccs"):
+                if name in ("232-mmi", "116-ccs") and not args.no_figures:
                     destination = output/name
                     destination.mkdir(exist_ok=True)
                     for figure in selected:

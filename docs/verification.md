@@ -1,4 +1,29 @@
-# Local verification — 2026-09-16
+# Local verification
+
+## Combined HPC/TR/MoCA merge — 9 October 2026
+
+- The full WSL suite passed **297 tests**. A final focused check passed **7 tests** for independent-model HC3 inference, optional MMSE rendering and MoCA coefficient maps.
+- All **32 targets / 160 registered figures** are retained; `run all` selects **28** diagnosis/MoCA targets, with two MMSE and two TDMI-ratio targets optional.
+- Fresh actual-size synthetic runs completed all default targets for 232-MMI, 232-CCS, 116-MMI and 116-CCS. Both diagnosis and MoCA HC3 tables contained the expected 214,368 or 53,360 tests, with valid statuses and validated unique matrix pairs.
+- The incoming TR acquisition code, cohort filter, independent grouping preparation, runner and TR tests were preserved unchanged. Eligibility still requires inclusive TR 2.875–3.150 seconds before visit selection, with missing/invalid metadata excluded.
+- The notebook has **110** unique cells, valid Python and no saved outputs. Principal-mode sections and optional MMSE sections coexist with all incoming diagnosis/MoCA sections.
+- The synthetic rerun used `--no-figures`, keeping only an aggregate summary outside the code repository. Historical records below describe their respective earlier code states.
+
+## Diagnosis and MoCA update — 2026-09-24
+
+**258 tests passed**. All **28 numerical targets** (26 default plus two opt-in TDMI-ratio targets) completed on synthetic data, and all **152 registered figure recipes** rendered from saved numerical bundles. Tests include missing/invalid MoCA, exact score boundaries, discordant diagnosis/MoCA labels, independent cohort membership and confound coefficients, no older-visit substitution for missing scores, mean preservation, separate FDR families, training-only prediction preprocessing, longitudinal visit labels/time origins, MATLAB identifiers/parcel order, standalone/all equivalence, rejection of removed MMSE target IDs, and source-free MoCA SVG/PNG/PDF export.
+
+The replacement notebook's 98 cells have unique IDs, parseable Python and no stored outputs; all 28 individual targets and the default paired run are represented. Source distribution and wheel builds succeeded. The earlier 297-cell notebook catalogue remains complete, with historical MMSE grouping explicitly superseded by MoCA.
+
+This verification uses synthetic fixtures only. No cluster jobs or real-data analyses were run for this update. Existing configurations need no additional grouping fields; the implementation fingerprint creates new preparation/results directories. Diagnosis and MoCA have separate adjusted stores and a shared raw store.
+
+## Acquisition TR update — 2026-09-22
+
+**167 tests passed** after adding the default inclusive 2.875–3.150-second repetition-time filter. New coverage verifies exact boundaries (and immediately adjacent floating-point values), the 197-point/6.015-second outlier, exclusion before latest/baseline/specified-visit selection, exclusion from all retained visits, relative/absolute source links, `.nii`/`.nii.gz` metadata lookup, tensor symlinks, missing/invalid/unreadable metadata, conflicting source identities, invalid configuration and cache invalidation after metadata/settings changes. Synthetic fixtures now include S8b source links and BOLD acquisition JSONs. The full existing numerical and saved-result rendering suite also passed.
+
+No new real-data run or HPC changes were performed for this update. Existing runs must be recomputed to apply the new cohort rule; source-free replotting preserves the cohort of the original saved result.
+
+## Initial implementation — 2026-09-16
 
 ## Release 0.2.0 verification — 9 October 2026
 

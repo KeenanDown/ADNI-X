@@ -7,7 +7,6 @@ from sklearn.metrics import accuracy_score, balanced_accuracy_score, confusion_m
 from sklearn.model_selection import train_test_split
 
 from .analyses import context
-from .constants import GROUPS
 from .numerics import (adjusted_features, apply_adjustment, normalise_tdmi, regional_sums,
                        hierarchy, correlation)
 from .provenance import rng_for
@@ -41,8 +40,8 @@ def lda(prepared):
     if df.subject.duplicated().any():
         raise ValueError("Prediction input must have one scan per participant")
     raw = features(prepared, df).reshape(len(df), -1)
-    binary = np.flatnonzero(df.group.isin(["CN", "AD"]))
-    train, test = split_indices(df.group.iloc[binary], settings, "lda.split")
+    binary = np.flatnonzero(df.analysis_group.isin([prepared.groups[0], prepared.groups[-1]]))
+    train, test = split_indices(df.analysis_group.iloc[binary], settings, prepared.target("lda") + ".split")
     train, test = binary[train], binary[test]
     train_y, test_y, design, beta, nobs = adjusted_features(
         df.iloc[train], df.iloc[test], raw[train], raw[test], prepared.config.transform)
@@ -50,66 +49,69 @@ def lda(prepared):
     if not keep.any():
         raise InsufficientData("No finite, varying training features")
     model = LinearDiscriminantAnalysis(solver="svd")
-    model.fit(train_y[:, keep], df.group.iloc[train])
+    model.fit(train_y[:, keep], df.analysis_group.iloc[train])
     all_adjusted = apply_adjustment(raw, design.matrix(df), beta, design.reference, prepared.config.transform.adjustment)
     valid = np.isfinite(all_adjusted[:, keep]).all(axis=1)
-    output = df[["scan_id", "subject", "group"]].copy()
+    output = df[["scan_id", "subject", "analysis_group"]].rename(columns={"analysis_group": "group"})
     output["split"] = "projection_only"
     output.loc[train, "split"], output.loc[test, "split"] = "train", "test"
     output["prediction"] = pd.Series([None]*len(output), dtype="object")
-    output["decision"], output["probability_AD"] = np.nan, np.nan
+    probability = f"probability_{prepared.groups[-1]}"
+    auc = f"roc_auc_{prepared.groups[-1]}"
+    output["decision"], output[probability] = np.nan, np.nan
     output["status"] = np.where(valid, "ok", "nonfinite_heldout_features")
     output.loc[valid, "prediction"] = model.predict(all_adjusted[valid][:, keep])
     output.loc[valid, "decision"] = model.decision_function(all_adjusted[valid][:, keep])
-    ad_column = list(model.classes_).index("AD")
-    output.loc[valid, "probability_AD"] = model.predict_proba(all_adjusted[valid][:, keep])[:, ad_column]
+    probability_column = list(model.classes_).index(prepared.groups[-1])
+    output.loc[valid, probability] = model.predict_proba(all_adjusted[valid][:, keep])[:, probability_column]
     held = output.loc[(output.split == "test") & valid]
     metrics = {"test_participants": len(test), "valid_test_participants": len(held), "accuracy": np.nan,
-               "balanced_accuracy": np.nan, "roc_auc_AD": np.nan,
+               "balanced_accuracy": np.nan, auc: np.nan,
                "status": "ok" if len(held) == len(test) else "incomplete_heldout_evaluation"}
     if len(held):
         metrics["accuracy"] = accuracy_score(held.group, held.prediction)
         metrics["balanced_accuracy"] = balanced_accuracy_score(held.group, held.prediction)
         if held.group.nunique() == 2:
-            metrics["roc_auc_AD"] = roc_auc_score(held.group == "AD", held.probability_AD)
-    matrix = confusion_matrix(held.group, held.prediction, labels=["CN", "AD"]) if len(held) else np.zeros((2, 2), int)
+            metrics[auc] = roc_auc_score(held.group == prepared.groups[-1], held[probability])
+    matrix = confusion_matrix(held.group, held.prediction, labels=[prepared.groups[0], prepared.groups[-1]]) if len(held) else np.zeros((2, 2), int)
     result = Result(tables={"predictions": output, "metrics": pd.DataFrame([metrics]), "atlas": atlas},
                     arrays={"confusion": matrix, "feature_mask": keep, "confound_coefficients": beta,
                             "confound_nobs": nobs, "lda_coefficients": model.coef_, "lda_intercept": model.intercept_},
                     metadata={"cohort": "complete-case selected participants", "exploratory": True,
-                              "confound_design": design.to_dict(), "classes": model.classes_.tolist(),
+                              "confound_design": design.to_dict(), "classes": model.classes_.tolist(), "confusion_labels": [prepared.groups[0], prepared.groups[-1]],
+                              "probability_class": prepared.groups[-1],
                               "fit_subjects": df.subject.iloc[train].tolist(), "test_subjects": df.subject.iloc[test].tolist(),
                               "feature_shape": [len(atlas), 16], "decision_positive_class": str(model.classes_[1])})
     result.figure("lda.confusion", "confusion")
     result.figure("lda.projections", "prediction_distribution", table="predictions", value="decision")
-    return result
+    return prepared.finish(result)
 
 
 def heldout_hierarchy(prepared):
     df, atlas, settings = context(prepared, 6)
     raw = features(prepared, df).reshape(len(df), -1)
-    train, test = split_indices(df.group, settings, "heldout-hierarchy.split")
+    train, test = split_indices(df.analysis_group, settings, prepared.target("heldout-hierarchy") + ".split")
     train_y, test_y, design, beta, nobs = adjusted_features(
         df.iloc[train], df.iloc[test], raw[train], raw[test], prepared.config.transform)
     train_y, test_y = train_y.reshape(-1, len(atlas), 16), test_y.reshape(-1, len(atlas), 16)
-    cn = train_y[df.group.iloc[train].to_numpy() == "CN"]
+    cn = train_y[df.analysis_group.iloc[train].to_numpy() == prepared.groups[0]]
     if len(cn) < 2:
-        raise InsufficientData("Held-out hierarchy requires at least two CN training participants")
+        raise InsufficientData(f"Held-out hierarchy requires at least two {prepared.groups[0]} training participants")
     reference = hierarchy(cn.mean(axis=0))
     if not np.isfinite(reference).all() or np.ptp(reference) == 0:
-        raise InsufficientData("Training CN hierarchy is missing or constant")
+        raise InsufficientData("Training reference hierarchy is missing or constant")
     rows = []
     for indices, arr, split in ((train, train_y, "train"), (test, test_y, "test")):
         for index, values in zip(indices, arr):
             r = correlation(reference, hierarchy(values))
             rows.append({"scan_id": df.scan_id.iloc[index], "subject": df.subject.iloc[index],
-                         "group": df.group.iloc[index], "split": split, "correlation": r,
+                         "group": df.analysis_group.iloc[index], "split": split, "correlation": r,
                          "status": "ok" if np.isfinite(r) else "constant_or_missing_hierarchy"})
     result = Result(tables={"scores": pd.DataFrame(rows), "atlas": atlas},
-                    arrays={"CN_training_hierarchy": reference, "confound_coefficients": beta, "confound_nobs": nobs},
+                    arrays={"CN_training_hierarchy" if prepared.grouping == "diagnosis" else "reference_training_hierarchy": reference, "confound_coefficients": beta, "confound_nobs": nobs},
                     metadata={"cohort": "complete-case selected participants", "exploratory": True,
                               "confound_design": design.to_dict(), "fit_subjects": df.subject.iloc[train].tolist(),
                               "test_subjects": df.subject.iloc[test].tolist()})
     result.figure("heldout-hierarchy.correlations", "prediction_distribution", table="scores", value="correlation")
-    return result
+    return prepared.finish(result)
 

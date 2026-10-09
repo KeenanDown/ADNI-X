@@ -15,6 +15,10 @@ cohort:
   estimator: mmi
   time_min: 150
   time_max: 250
+  # Inclusive seconds from tensor JSON source_bold -> BOLD JSON RepetitionTime.
+  # Missing/invalid metadata is excluded; both filters precede visit selection.
+  tr_min_seconds: 2.875
+  tr_max_seconds: 3.150
   visit: latest
 transform:
   tdmi: none
@@ -36,5 +40,4 @@ statistics:
   correction: fdr_bh
   test_fraction: 0.25
 cache: /data/scratch/bty184/adni-x/cache
-results: /data/SBBS-PIDProject/Keenan/ADNI-X-Outputs
-
+results: /data/SBBS-PIDProject/Keenan/Results/ADNI-X

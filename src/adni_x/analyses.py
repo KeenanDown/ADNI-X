@@ -23,8 +23,22 @@ def context(prepared, minimum=1):
     return df, atlas, prepared.config.statistics
 
 
+def analysis_view(prepared, grouping):
+    """Select the independently fitted model before reading adjusted arrays."""
+    target = {"group": "diagnosis", "MOCA_category": "moca"}.get(grouping)
+    return prepared.for_group(target) if target and prepared.grouping != target else prepared
+
+
 def grouped_context(prepared, grouping):
     df, atlas, settings = context(prepared, 2)
+    grouping = grouping or prepared.group_column
+    if grouping == "MMSE_category":
+        # Categorise MMSE only when explicitly requested; default preparation
+        # retains the source score without calculating an MMSE category.
+        score = df.MMSE.where(df.MMSE.between(0, 30) & (df.MMSE % 1 == 0))
+        df = df.copy()
+        df[grouping] = pd.cut(score, [-1, 19, 27, 30],
+                             labels=["0-19", "20-27", "28-30"]).astype(object)
     groups = {"group": GROUPS, "MOCA_category": MOCA_GROUPS,
               "MMSE_category": MMSE_GROUPS}[grouping]
     df = df.loc[df[grouping].isin(groups)].copy()
@@ -62,7 +76,9 @@ def _compare_columns(a, b, welch):
             "status": np.where((na < 2) | (nb < 2), "insufficient_samples", np.where(valid, "ok", "zero_variance"))}
 
 
-def group_matrices(prepared, grouping="group"):
+def group_matrices(prepared, grouping=None):
+    prepared = analysis_view(prepared, grouping)
+    grouping = grouping or prepared.group_column
     df, atlas, settings, groups = grouped_context(prepared, grouping)
     data = prepared.array("adjusted")
     p = len(atlas)
@@ -99,16 +115,16 @@ def group_matrices(prepared, grouping="group"):
                     arrays={"group_means": means}, metadata={"groups": groups, "grouping": grouping,
                         "cohort": "adjusted", "family": "unique ROI pairs per atom/contrast",
                         "edge_convention": "unique_upper", "symmetry": symmetry})
-    name = "group-matrices" if grouping == "group" else "group-matrices-moca"
+    name = "group-matrices"
     for atom in (0, 15):
         result.figure(f"{name}.{ATOMS[atom]}", "group_matrices", atom=atom,
                       group_a=groups[0], group_b=groups[-1])
-    return result
+    return prepared.finish(result)
 
 
 def coefficients(prepared):
     df, atlas, settings = context(prepared, 2)
-    model = json.loads((prepared.path / "design.json").read_text())
+    model = json.loads((prepared.model_path / "design.json").read_text())
     beta = np.asarray(prepared.array("coefficients"))
     names = ["Intercept", *model["columns"]]
     X = np.asarray(prepared.array("design_matrix"))
@@ -158,10 +174,12 @@ def coefficients(prepared):
     for atom in (0, 15):
         result.figure(f"coefficients.{ATOMS[atom]}", "coefficients", atom=atom)
         result.figure(f"coefficients.{ATOMS[atom]}.significant", "coefficients", atom=atom, significant=True)
-    return result
+    return prepared.finish(result)
 
 
-def network_effects(prepared, grouping="group"):
+def network_effects(prepared, grouping=None):
+    prepared = analysis_view(prepared, grouping)
+    grouping = grouping or prepared.group_column
     df, atlas, settings, groups = grouped_context(prepared, grouping)
     values = prepared.array("network")
     nets = sorted(atlas.network_id.unique())
@@ -169,7 +187,7 @@ def network_effects(prepared, grouping="group"):
     for ni, net in enumerate(nets):
         for atom, atom_name in enumerate(ATOMS):
             for i, row in df.iterrows():
-                observations.append({"scan_id": row.scan_id, "subject": row.subject, "group": row.group,
+                observations.append({"scan_id": row.scan_id, "subject": row.subject, "group": row.analysis_group,
                                      "network_id": net, "network": NETWORKS[net], "atom": atom_name, "value": values[i, ni, atom]})
                 observations[-1]["group"] = row[grouping]
             for a, b in combinations(groups, 2):
@@ -180,14 +198,14 @@ def network_effects(prepared, grouping="group"):
     result = Result(tables={"effects": table, "observations": pd.DataFrame(observations)},
                     metadata={"cohort": "adjusted", "groups": groups, "grouping": grouping,
                               "family": "all 16 atoms x all networks per contrast"})
-    name = "network-effects" if grouping == "group" else "network-effects-moca"
+    name = "network-effects"
     for a, b in combinations(groups, 2):
         for effect in ("cohens_d", "hedges_g"):
             for subset in ("all-atoms", "rtr-sts"):
                 result.figure(f"{name}.{b}-vs-{a}.{effect}.{subset}", "effects_grid",
                               table="effects", group_a=a, group_b=b, effect=effect,
                               atoms=list(ATOMS) if subset == "all-atoms" else ["rtr", "sts"])
-    return result
+    return prepared.finish(result)
 
 
 def regional_effects(prepared):
@@ -195,11 +213,11 @@ def regional_effects(prepared):
     values = prepared.array("regional")
     rows = []
     for atom in (0, 15):
-        for a, b in PAIRS:
+        for a, b in prepared.pairs:
             for region in range(len(atlas)):
                 rows.append({"parcel_index": region, "parcel_id": atlas.parcel_id.iloc[region],
                              "network_id": atlas.network_id.iloc[region], "atom": ATOMS[atom], "group_a": a, "group_b": b,
-                             **compare(values[df.group == a, region, atom], values[df.group == b, region, atom], settings.welch)})
+                             **compare(values[df.analysis_group == a, region, atom], values[df.analysis_group == b, region, atom], settings.welch)})
     table = correct(pd.DataFrame(rows), ["atom", "group_a", "group_b"], settings)
     counts = []
     for (atom, a, b, net), sub in table.groupby(["atom", "group_a", "group_b", "network_id"]):
@@ -212,20 +230,22 @@ def regional_effects(prepared):
         idx = np.flatnonzero(atlas.network_id == net)
         for atom in (0, 15):
             net_values = values[:, idx, atom].mean(axis=1)
-            for a, b in PAIRS:
+            for a, b in prepared.pairs:
                 net_rows.append({"network_id": net, "atom": ATOMS[atom], "group_a": a, "group_b": b,
-                                 **compare(net_values[df.group == a], net_values[df.group == b], settings.welch)})
+                                 **compare(net_values[df.analysis_group == a], net_values[df.analysis_group == b], settings.welch)})
     net_table = correct(pd.DataFrame(net_rows), ["atom", "group_a", "group_b"], settings)
     result = Result(tables={"effects": table, "network_counts": pd.DataFrame(counts), "network_regional_effects": net_table, "atlas": atlas},
                     metadata={"cohort": "adjusted", "family": "regions per atom/contrast; network regional averages per atom/contrast"})
     for atom in ("rtr", "sts"):
-        for a, b in PAIRS:
+        for a, b in prepared.pairs:
             result.figure(f"regional-effects.{atom}.{b}-vs-{a}", "significance_strip", atom=atom, group_a=a, group_b=b)
         result.figure(f"regional-effects.{atom}.network-counts", "network_counts", atom=atom)
-    return result
+    return prepared.finish(result)
 
 
-def hierarchies(prepared, grouping="group"):
+def hierarchies(prepared, grouping=None):
+    prepared = analysis_view(prepared, grouping)
+    grouping = grouping or prepared.group_column
     df, atlas, settings, names = grouped_context(prepared, grouping)
     values = np.asarray(prepared.array("regional"))[df.index.to_numpy()]
     labels = df[grouping]
@@ -238,8 +258,8 @@ def hierarchies(prepared, grouping="group"):
             rows.append({"group": group, "parcel_index": r, "parcel_id": atlas.parcel_id.iloc[r],
                          "network_id": atlas.network_id.iloc[r], "hierarchy": ranks[group][r],
                          "rtr": means[group][r, 0], "sts": means[group][r, 15], "n": len(sub)})
-    name = "hierarchies" if grouping == "group" else "hierarchies-moca"
-    rng = rng_for(settings.seed, name)
+    name = "hierarchies"
+    rng = rng_for(settings.seed, prepared.target(name))
     pairs = list(combinations(names, 2))
     samples = np.full((settings.resamples, len(pairs)), np.nan)
     grouped = {g: values[labels == g] for g in names}
@@ -270,10 +290,12 @@ def hierarchies(prepared, grouping="group"):
         result.figure(f"{name}.{measure}", "profiles", measure=measure, anchor=names[0],
                       order="difference" if "_" in measure else "reference")
     result.figure(f"{name}.correlations", "correlation_intervals")
-    return result
+    return prepared.finish(result)
 
 
-def taxa(prepared, six=False, grouping="group", principal=False):
+def taxa(prepared, six=False, grouping=None, principal=False):
+    prepared = analysis_view(prepared, grouping)
+    grouping = grouping or prepared.group_column
     df, atlas, settings, groups = grouped_context(prepared, grouping)
     values = np.asarray(prepared.array("network"))
     taxonomy = TAXA_PRINCIPAL if principal else TAXA_SIX if six else TAXA_FOUR
@@ -294,35 +316,45 @@ def taxa(prepared, six=False, grouping="group", principal=False):
     tests = correct(pd.DataFrame(tests), [], settings)
     posthoc = correct(pd.DataFrame(posthoc), [], settings)
     posthoc = posthoc.merge(tests[["taxon", "network_id", "q"]].rename(columns={"q": "omnibus_q"}), on=["taxon", "network_id"], validate="many_to_one")
-    suffix = {"group": "dx", "MOCA_category": "moca", "MMSE_category": "mmse"}[grouping]
+    suffix = "mmse" if grouping == "MMSE_category" else "dx"
     name = f"taxa-{'principal' if principal else 'six' if six else 'four'}-{suffix}"
     result = Result(tables={"observations": pd.DataFrame(observations), "omnibus": tests, "posthoc": posthoc},
                     metadata={"groups": groups, "grouping": grouping, "cohort": "adjusted", "taxonomy": taxonomy,
                               "display_order": list(taxonomy),
                               "family": "all taxon/network panels; all panel/contrast posthoc tests separately"})
     result.figure(f"{name}.panels", "taxa_panels")
+    result = prepared.finish(result)
+    if grouping == "MMSE_category":
+        result.metadata.update(grouping="mmse", grouping_column=grouping,
+                               groups=groups, reference_group=groups[0])
+        result.tables["observations"]["grouping"] = "mmse"
     return result
+
+
+def export_label(group):
+    """MATLAB identifiers must begin with a letter and contain no hyphens."""
+    return group if group in {"CN", "MCI", "AD"} else "MOCA_" + group.replace("-", "_")
 
 
 def cn_reference(prepared):
     df, atlas, _ = context(prepared, 2)
     values = np.asarray(prepared.array("regional"))
-    cn = values[df.group == "CN"]
+    cn = values[df.analysis_group == prepared.groups[0]]
     if len(cn) < 2:
-        raise InsufficientData("CN standardisation needs at least two CN participants")
+        raise InsufficientData(f"Reference standardisation needs at least two {prepared.groups[0]} participants")
     z, mean, sd, valid = cn_standardise(values, cn)
     rows, subject_rows, pcs, meta = [], [], [], []
     groups = {}
-    for group in GROUPS:
-        group_values = z[df.group == group]
+    for group in prepared.groups:
+        group_values = z[df.analysis_group == group]
         groups[group] = group_values.mean(axis=0) if len(group_values) else np.full(values.shape[1:], np.nan)
         for r in range(len(atlas)):
             rows.append({"group": group, "parcel_index": r, "parcel_id": atlas.parcel_id.iloc[r],
                          "network_id": atlas.network_id.iloc[r], "rtr": groups[group][r, 0], "sts": groups[group][r, 15]})
     for i, row in df.iterrows():
-        subject_rows.append({"scan_id": row.scan_id, "subject": row.subject, "group": row.group,
+        subject_rows.append({"scan_id": row.scan_id, "subject": row.subject, "group": row.analysis_group,
                              "rtr": np.mean(z[i, :, 0]), "sts": np.mean(z[i, :, 15])})
-    for group in ("MCI", "AD"):
+    for group in prepared.groups[1:]:
         xy = groups[group][:, [0, 15]]
         keep = np.isfinite(xy).all(axis=1)
         if keep.sum() < 3:
@@ -346,20 +378,20 @@ def cn_reference(prepared):
     result = Result(tables={"regions": pd.DataFrame(rows), "subjects": pd.DataFrame(subject_rows),
                            "pca_scores": pd.DataFrame(pcs, columns=["group", "parcel_index", "parcel_id", "network_id", "PC1"]), "atlas": atlas},
                     arrays={"standardised": z, "reference_mean": mean, "reference_sd": sd, "valid_reference": valid},
-                    metadata={"cohort": "adjusted", "pca": meta, "reference": "CN, per-region/atom population SD"})
-    vectors = {f"{g}_{ATOMS[a]}": groups[g][:, a, None] for g in ("MCI", "AD") for a in (0, 15)}
+                    metadata={"cohort": "adjusted", "pca": meta, "reference": f"{prepared.groups[0]}, per-region/atom population SD"})
+    vectors = {f"{export_label(g)}_{ATOMS[a]}": groups[g][:, a, None] for g in prepared.groups[1:] for a in (0, 15)}
     vectors.update(parcel_index=np.arange(len(atlas))[:, None], parcel_id=atlas.parcel_id.astype(str).to_numpy(dtype=object)[:, None],
                    network_id=atlas.network_id.to_numpy()[:, None])
-    for group in ("MCI", "AD"):
+    for group in prepared.groups[1:]:
         sub = result.tables["pca_scores"].query("group == @group")
-        vectors[f"{group}_PC1"] = sub.PC1.to_numpy()[:, None] if len(sub) else np.full((len(atlas), 1), np.nan)
+        vectors[f"{export_label(group)}_PC1"] = sub.PC1.to_numpy()[:, None] if len(sub) else np.full((len(atlas), 1), np.nan)
     result.matlab["regional_brain_exports"] = vectors
     result.figure("cn-reference.regions", "reference_scatter", table="regions")
     result.figure("cn-reference.subjects", "reference_scatter", table="subjects")
-    for group in ("MCI", "AD"):
+    for group in prepared.groups[1:]:
         result.figure(f"cn-reference.{group}.networks", "reference_scatter", table="regions", group=group)
         result.figure(f"cn-reference.{group}.pca", "pca", group=group)
-    return result
+    return prepared.finish(result)
 
 
 def alterations(prepared):
@@ -367,11 +399,11 @@ def alterations(prepared):
     values = np.asarray(prepared.array("regional"))
     nets = sorted(atlas.network_id.unique())
     tables, corr_rows, arrays = [], [], {}
-    for a, b in PAIRS:
-        ia, ib = np.flatnonzero(df.group == a), np.flatnonzero(df.group == b)
+    for a, b in prepared.pairs:
+        ia, ib = np.flatnonzero(df.analysis_group == a), np.flatnonzero(df.analysis_group == b)
         for atom in (0, 15):
             key = f"{ATOMS[atom]}_{b}_vs_{a}"
-            rng = rng_for(settings.seed, f"alterations.{key}")
+            rng = rng_for(settings.seed, f"{prepared.target('alterations')}.{key}")
             if min(len(ia), len(ib)) < 2:
                 for net in nets:
                     tables.append({"atom": ATOMS[atom], "group_a": a, "group_b": b, "network_id": net,
@@ -409,43 +441,44 @@ def alterations(prepared):
                               "status": "ok" if np.isfinite(corr_obs) else "constant_or_missing_features"})
             arrays[f"regional_shuffle_{key}"] = null
             arrays[f"subject_bootstrap_{key}"] = bootstrap
-            arrays[f"diagnosis_permutation_{key}"] = corr_null
+            permutation_name = "diagnosis_permutation" if prepared.grouping == "diagnosis" else "moca_permutation"
+            arrays[f"{permutation_name}_{key}"] = corr_null
             arrays[f"delta_{key}"] = delta
     network = correct(pd.DataFrame(tables), ["atom", "group_a", "group_b"], settings)
     corrs = correct(pd.DataFrame(corr_rows), [], settings) if corr_rows else pd.DataFrame(columns=["atom", "group_a", "group_b", "pearson_r", "p", "q", "status"])
     result = Result(tables={"networks": network, "correlations": corrs, "atlas": atlas}, arrays=arrays,
                     metadata={"cohort": "adjusted", "exploratory": True,
                               "regional_null": "exchangeable regional changes; does not preserve spatial structure",
-                              "correlation_null": "diagnosis-label permutation, centred at its empirical null mean; shared baseline retained",
+                              "correlation_null": "analysis-group-label permutation, centred at its empirical null mean; shared baseline retained",
                               "bootstrap": "stratified participant resampling; conditional on fitted confound adjustment"})
     for atom in ("rtr", "sts"):
-        for a, b in PAIRS:
+        for a, b in prepared.pairs:
             result.figure(f"alterations.{atom}.{b}-vs-{a}", "network_intervals", atom=atom, group_a=a, group_b=b)
-    return result
+    return prepared.finish(result)
 
 
 def tdmi(prepared):
     df, atlas = prepared.table("selected"), prepared.table("atlas")
     settings = prepared.config.statistics
-    df = df.loc[df.group.isin(GROUPS)].copy()
+    df = df.loc[df.analysis_group.isin(prepared.groups)].copy()
     if df.empty:
-        raise InsufficientData("No selected scans with a target diagnosis")
+        raise InsufficientData(f"No selected scans with a target {prepared.grouping} label")
     df["value"] = prepared.array("raw_tdmi")[df.tensor_row.to_numpy(int)]
-    observations = df[["scan_id", "subject", "session", "group", "n_time", "value"]]
+    observations = df[["scan_id", "subject", "session", "analysis_group", "n_time", "value"]].rename(columns={"analysis_group": "group"})
     summary = observations.groupby("group").value.agg(n="count", mean="mean", SD="std", median="median").reset_index()
-    cn = summary.loc[summary.group == "CN", "mean"]
+    cn = summary.loc[summary.group == prepared.groups[0], "mean"]
     if len(cn):
-        summary["difference_from_CN"] = summary["mean"] - cn.iloc[0]
-        summary["percent_difference_from_CN"] = 100*(summary["mean"] / cn.iloc[0] - 1) if cn.iloc[0] != 0 else np.nan
-    samples = [observations.loc[observations.group == g, "value"].to_numpy() for g in GROUPS]
+        summary[f"difference_from_{prepared.groups[0]}"] = summary["mean"] - cn.iloc[0]
+        summary[f"percent_difference_from_{prepared.groups[0]}"] = 100*(summary["mean"] / cn.iloc[0] - 1) if cn.iloc[0] != 0 else np.nan
+    samples = [observations.loc[observations.group == g, "value"].to_numpy() for g in prepared.groups]
     tests = pd.DataFrame([{"method": "Welch" if w else "ordinary", "primary": w == settings.welch,
                            **omnibus(samples, w)} for w in (True, False)])
     pairs = correct(pd.DataFrame([{"group_a": a, "group_b": b, **compare(observations.loc[observations.group == a, "value"],
-                          observations.loc[observations.group == b, "value"], settings.welch)} for a, b in PAIRS]), [], settings)
+                          observations.loc[observations.group == b, "value"], settings.welch)} for a, b in prepared.pairs]), [], settings)
     result = Result(tables={"observations": observations, "summary": summary, "omnibus": tests, "pairwise": pairs,
                            "length_audit": prepared.table("inventory")},
-                    metadata={"cohort": "selected eligible scans with diagnosis; no confound-completeness restriction",
+                    metadata={"cohort": "selected eligible scans with analysis-group labels; no confound-completeness restriction",
                               "measure": "sum of 16 RAW atoms, mean across included edges", "tdmi_normalisation": "none"})
     result.figure("tdmi.groups", "group_distribution", table="observations", value="value")
     result.figure("tdmi.lengths", "lengths")
-    return result
+    return prepared.finish(result)

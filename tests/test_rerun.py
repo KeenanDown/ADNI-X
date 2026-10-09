@@ -57,6 +57,7 @@ def test_symmetry_checks_participants_and_missingness(prepared):
 
 @pytest.mark.parametrize("grouping", ["group", "MOCA_category"])
 def test_unique_matrix_families_and_values(prepared, grouping):
+    prepared = prepared.for_group("moca") if grouping == "MOCA_category" else prepared
     result = group_matrices(prepared, grouping)
     edges = result.tables["edges"]
     assert len(edges) == 2*3*6 and (edges.parcel_i < edges.parcel_j).all()
@@ -72,6 +73,7 @@ def test_unique_matrix_families_and_values(prepared, grouping):
 
 @pytest.mark.parametrize("grouping", ["group", "MOCA_category"])
 def test_principal_modes_preserve_each_atom_and_families(prepared, grouping):
+    prepared = prepared.for_group("moca") if grouping == "MOCA_category" else prepared
     result = taxa(prepared, grouping=grouping, principal=True)
     assert result.metadata["display_order"] == list(TAXA_PRINCIPAL)
     observations = result.tables["observations"]
@@ -88,8 +90,9 @@ def test_principal_modes_preserve_each_atom_and_families(prepared, grouping):
 
 
 def test_moca_missingness_keeps_original_participant_indices(prepared):
-    df = prepared.table("subjects"); df.loc[[0, 3, 15], "MOCA_category"] = np.nan
-    proxy = Proxy(prepared, subjects=df)
+    view = prepared.for_group("moca")
+    df = view.table("subjects"); df.loc[[0, 3, 15], "MOCA_category"] = np.nan
+    proxy = Proxy(view, subjects=df)
     assert len(group_matrices(proxy, "MOCA_category").tables["group_counts"]) == 3
     result = taxa(proxy, grouping="MOCA_category", principal=True)
     assert result.tables["observations"].subject.nunique() == len(df)-3
@@ -98,8 +101,8 @@ def test_moca_missingness_keeps_original_participant_indices(prepared):
     assert net.metadata["groups"] == MOCA_GROUPS
     row = result.tables["observations"].iloc[0]
     participant = df.index[df.subject == row.subject][0]
-    np.testing.assert_allclose(row.value, prepared.array("network")[participant, 0, [7, 11, 3]].sum())
-    assert taxa(proxy, principal=True).tables["observations"].subject.nunique() == len(df)
+    np.testing.assert_allclose(row.value, view.array("network")[participant, 0, [7, 11, 3]].sum())
+    assert taxa(prepared, principal=True).tables["observations"].subject.nunique() == len(df)
 
 
 def test_moca_boundaries_and_noninteger_scores(tmp_path):
@@ -148,9 +151,10 @@ def test_hc3_failure_states(kind, status):
 
 
 @pytest.mark.parametrize("normalisation", ["none", "tdmi"])
-def test_coefficient_inference_uses_original_responses(config, normalisation):
+@pytest.mark.parametrize("grouping", ["diagnosis", "moca"])
+def test_coefficient_inference_uses_original_responses(config, normalisation, grouping):
     config = replace(config, transform=replace(config.transform, tdmi=normalisation))
-    prepared = prepare(config); result = coefficients(prepared)
+    prepared = prepare(config).for_group(grouping); result = coefficients(prepared)
     table = result.tables["inference"]
     assert len(table) == 2*6*4 and "Intercept" not in set(table.coefficient)
     assert set(table.status) == {"ok"}
@@ -169,6 +173,30 @@ def test_coefficient_inference_uses_original_responses(config, normalisation):
 def test_intercept_only_coefficients_have_empty_inference(config):
     prepared = prepare(replace(config, transform=replace(config.transform, confounds=())))
     assert coefficients(prepared).tables["inference"].empty
+
+
+def test_hc3_uses_separate_moca_model_with_discordant_membership(config):
+    clinical = pd.read_csv(config.inputs.clinical)
+    clinical.loc[1, "MOCA"] = np.nan
+    clinical.loc[3, "DX"] = np.nan
+    clinical.to_csv(config.inputs.clinical, index=False)
+    dataset = prepare(config)
+    fitted = {}
+    for grouping in ("diagnosis", "moca"):
+        view = dataset.for_group(grouping)
+        subjects = view.table("subjects")
+        X = view.array("design_matrix")
+        response = view.array("raw")[subjects.tensor_row.to_numpy(int), 0, 1, 0][:, None]
+        beta = view.array("coefficients")[:, [16]]
+        expected = hc3_coefficients(X, response, beta)
+        result = coefficients(view)
+        row = result.tables["inference"].query("atom == 'rtr' and parcel_i == 0 and parcel_j == 1").iloc[0]
+        np.testing.assert_allclose(row.standard_error, expected["standard_error"][1, 0])
+        np.testing.assert_allclose(row.p, expected["p"][1, 0])
+        assert row.nobs == len(subjects)
+        assert result.metadata["grouping"] == grouping
+        fitted[grouping] = row.estimate
+    assert fitted["diagnosis"] != fitted["moca"]
 
 
 def test_default_targets_are_moca_and_mmse_is_opt_in(prepared, tmp_path):

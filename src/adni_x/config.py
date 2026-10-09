@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 import json
+import math
 import yaml
 
 
@@ -29,6 +30,8 @@ class Cohort:
     time_min: int = 150
     time_max: int = 250
     visit: str = "latest"
+    tr_min_seconds: float = 2.875
+    tr_max_seconds: float = 3.150
 
 
 @dataclass(frozen=True)
@@ -71,6 +74,10 @@ class Config:
             raise ValueError("parcels must be >=2; estimator must be mmi or ccs")
         if not 0 < c.time_min <= c.time_max:
             raise ValueError("Require 0 < time_min <= time_max")
+        bounds = (c.tr_min_seconds, c.tr_max_seconds)
+        if (any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v)
+                for v in bounds) or not 0 < c.tr_min_seconds <= c.tr_max_seconds):
+            raise ValueError("Require finite 0 < tr_min_seconds <= tr_max_seconds")
         if c.visit not in {"latest", "baseline"} and not (
             c.visit.startswith("M") and c.visit[1:].isdigit()
         ):
@@ -127,4 +134,3 @@ class Config:
 
 def ensure_config(config):
     return config if isinstance(config, Config) else Config.load(config)
-

@@ -47,9 +47,10 @@ def test_conflicting_clinical_and_resolution(config):
 
 
 def test_duplicate_visit_requires_explicit_choice(config):
-    path = sorted(Path(config.inputs.tensors).glob("*ses-M012*"))[0]
+    path = sorted(Path(config.inputs.tensors).glob("*ses-M012*.mat"))[0]
     duplicate = path.with_name(path.name.replace("task-rest", "task-rest_run-2"))
     savemat(duplicate, {"PhiIDTensor": loadmat(path)["PhiIDTensor"]})
+    duplicate.with_suffix(".json").write_text(path.with_suffix(".json").read_text())
     inv = inventory(config)
     assert (inv.scans.reason == "ambiguous_same_visit_scans").sum() == 2
     resolution = Path(config.inputs.clinical).parent / "resolutions.csv"
@@ -92,7 +93,8 @@ def test_estimator_discovery_and_entity_conflicts(config, tmp_path):
         inventory(ccs)
     path = sorted(Path(config.inputs.tensors).glob("*.mat"))[0]
     savemat(path.with_name(path.name.replace("desc-phiid", "desc-CCS-phiid")), {"PhiIDTensor": loadmat(path)["PhiIDTensor"]})
+    path.with_name(path.name.replace("desc-phiid", "desc-CCS-phiid")).with_suffix(".json").write_text(
+        path.with_suffix(".json").read_text())
     assert len(inventory(ccs).scans) == 1
     with pytest.raises(ValueError, match="conflicting"):
         entities(tmp_path / "sub-ADNI001S9999" / path.name)
-

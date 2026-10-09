@@ -28,3 +28,6 @@ Cell numbers below are zero-based in the supplied 297-cell notebook. Historical 
 
 Method changes are documented separately from coding bugs in `methods.md`. The agreed 150–250 range also excludes 140-point scans; it must not be described as verified Advanced-only exclusion.
 
+On 2026-09-22, following the user's post hoc acquisition-metadata review, an inclusive 2.875–3.150-second TR requirement was added before visit selection. Length alone had admitted a 197-point scan with TR 6.015 seconds. TR now comes from the tensor sidecar's linked BOLD JSON; unresolved metadata excludes a scan. Both sidecars and configured bounds participate in cache identity. This is a cohort-method revision; existing saved results must be recomputed, not merely replotted.
+
+On 2026-09-24, all analysis families were extended to diagnosis and MoCA independently, replacing the earlier MMSE taxa targets. Both adjusted cohorts have separate confound fits; missing MoCA cannot shrink the diagnostic cohort, and missing diagnosis cannot discard an otherwise valid MoCA observation. Reference/PCA and prediction labels follow the active grouping, with MoCA 29–30 as reference. No diagnosis column is overwritten. Tests cover discordant labels, missing scores, bin boundaries, grouping-specific fits and training-only prediction preprocessing.
