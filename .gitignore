@@ -12,6 +12,9 @@ cache/
 results/
 reports/
 config.local.yaml
+config.*.local.yaml
+config.pilot.yaml
+adni-x-*.log
 *.mat
 *.pkl
 ADNIMerge*.csv

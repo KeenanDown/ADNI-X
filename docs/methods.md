@@ -14,7 +14,7 @@ Default complete-case handling performs no cohort imputation. The optional `miss
 
 For optional TDMI division, compute the sum of all 16 **raw** atoms per connection first, divide each atom by that sum, then adjust confounds. Denominators with absolute value below `epsilon` or nonfinite values are undefined; the invalid-edge counts are saved. Regression uses feature-specific valid rows where necessary. Downstream sums propagate invalid values.
 
-Regional sums use axis 1, excluding self-connections. Intranetwork means include both off-diagonal directions; the program never assumes atom symmetry. CN reference scaling uses per-region/per-atom mean and population SD across CN participants. Zero reference variance produces NaN with a saved validity mask. CN scaling does not enable TDMI division.
+Regional sums use axis 1, excluding self-connections. Intranetwork means include both off-diagonal directions. Unique-pair matrix and coefficient tests validate rtr/sts symmetry for every included participant (matching finite masks; rtol=1e-7, atol=1e-10). A failed check fails the analysis rather than dropping a direction. Other atom reductions retain their directed definitions. CN reference scaling uses per-region/per-atom mean and population SD across CN participants. Zero reference variance produces NaN with a saved validity mask. CN scaling does not enable TDMI division.
 
 PCA is two-dimensional on group-mean CN-standardised RTR and STS. PC1 is oriented toward increasing STS, with RTR as tie-breaker; scores retain original parcel order. Degenerate eigenspaces are reported instead of assigning an arbitrary axis. MATLAB exports include **parcel IDs**, not network labels masquerading as parcel IDs.
 
@@ -26,7 +26,8 @@ BH-FDR is applied to finite p-values within fixed families:
 
 | Result | Correction family |
 |---|---|
-| Edge matrices | All included directed edges, per atom and contrast |
+| Edge matrices | All unique included rtr/sts ROI pairs, per atom and contrast |
+| Confound coefficients | All non-intercept coefficients × unique ROI pairs, separately for rtr and sts |
 | Regional effects | All parcels, per atom and contrast |
 | Intranetwork atoms | All 16 atoms × all available networks, per contrast |
 | Network means of regional sums | Networks, per atom and contrast |
@@ -36,6 +37,14 @@ BH-FDR is applied to finite p-values within fixed families:
 | Alteration correlations | All atom/contrast correlations in that analysis |
 
 RTR/STS-only figures reuse the full intranetwork correction family. All effects and p/q values are exported, whether significant or not. Undefined tests do not contaminate finite FDR calculations. Display-only ordering never changes the test family.
+
+For 232 regions, unique off-diagonal matrix families contain 26,796 pairs per atom/contrast; for 116 regions they contain 6,670. Diagonal-inclusive sensitivity analyses add each self-pair once. Full-matrix significance plots mirror unique-pair results. Removing exact duplicate hypotheses does not automatically strengthen BH significance: duplicated identical p-values can produce the same q-values.
+
+Coefficient tests use the original (optionally TDMI-normalised) responses and existing centred confound-only regression. For each feature-valid participant subset, HC3 uses covariance `X+ diag((e/(1-h))²) X+ᵀ`, where `X+` is the design pseudoinverse and `h` is leverage. Two-sided approximate Student-t tests use df=n−rank(X); 95% confidence intervals use the same reference distribution. The intercept remains descriptive and is not tested. Rank-deficient designs, nonpositive residual degrees of freedom, unit leverage and zero/nonfinite standard errors produce explicit unavailable statuses. These are pooled covariate associations conditional on the other covariates; no diagnosis terms are added. Existing group tests remain conditional on fitted adjustment.
+
+The principal taxonomy contains upward causation, downward causation, transfer and storage as separate sums of their original atoms. It does not impose U=D or any copy/erasure/transfer identity. All six original modes remain available. Principal omnibus correction covers all four modes × networks; post-hoc correction covers all modes × networks × contrasts independently of omnibus selection, separately within each grouping/configuration.
+
+Diagnosis and MoCA analyses run by default. MoCA categories are 29–30, 20–28 and 0–19. Score missingness excludes a participant only from that cognitive analysis; scores are not imputed. MMSE targets are optional. Deviations in regional profile plots are group mean minus the per-parcel CN mean (29–30 reference for MoCA), without SD division. Parcels are ordered by AD−CN (0–19 minus 29–30 for MoCA). Network panels retain that relative order and share the overview's scale. These profiles and their ordering are descriptive.
 
 Bootstrap hierarchy intervals and alteration intervals resample participants within diagnosis groups, conditional on the already fitted descriptive confound adjustment. Regional network nulls shuffle regional changes jointly across networks, centred at the global regional mean. They assume exchangeable regions and **do not preserve spatial autocorrelation**; treat them as exploratory. Diagnosis-label permutations for alteration/baseline correlations preserve their shared-baseline coupling, using the empirical null mean for a two-sided test. These null hypotheses are separate and never implemented by shuffling ICV.
 

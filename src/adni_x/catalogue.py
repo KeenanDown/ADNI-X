@@ -3,7 +3,8 @@ from functools import partial
 from . import analyses
 from .longitudinal import longitudinal
 from .prediction import lda, heldout_hierarchy
-from .constants import PAIRS
+from .constants import PAIRS, MOCA_GROUPS
+from itertools import combinations
 
 
 @dataclass(frozen=True)
@@ -21,10 +22,17 @@ class Analysis:
 CATALOGUE = [
     Analysis("group-matrices", "Group atomic matrices and edge contrasts", "59-65", analyses.group_matrices,
              tuple(f"group-matrices.{a}" for a in ("rtr", "sts"))),
+    Analysis("group-matrices-moca", "MoCA atomic matrices and unique-pair contrasts", "59-65",
+             partial(analyses.group_matrices, grouping="MOCA_category"),
+             tuple(f"group-matrices-moca.{a}" for a in ("rtr", "sts")), True),
     Analysis("coefficients", "Confound coefficient grids", "66-71", analyses.coefficients,
-             tuple(f"coefficients.{a}" for a in ("rtr", "sts"))),
+             tuple(f"coefficients.{a}{s}" for a in ("rtr", "sts") for s in ("", ".significant"))),
     Analysis("network-effects", "Intranetwork atom comparisons and effect sizes", "73-94", analyses.network_effects,
              tuple(f"network-effects.{b}-vs-{a}.{e}.{s}" for a, b in PAIRS for e in ("cohens_d", "hedges_g") for s in ("all-atoms", "rtr-sts"))),
+    Analysis("network-effects-moca", "MoCA intranetwork atom comparisons and effect sizes", "73-94",
+             partial(analyses.network_effects, grouping="MOCA_category"),
+             tuple(f"network-effects-moca.{b}-vs-{a}.{e}.{s}" for a, b in combinations(MOCA_GROUPS, 2)
+                   for e in ("cohens_d", "hedges_g") for s in ("all-atoms", "rtr-sts")), True),
     Analysis("regional-effects", "Regional comparisons, significant counts and network summaries", "95-115,133-150", analyses.regional_effects,
              tuple([f"regional-effects.{atom}.{b}-vs-{a}" for atom in ("rtr", "sts") for a, b in PAIRS] +
                    [f"regional-effects.{atom}.network-counts" for atom in ("rtr", "sts")])),
@@ -34,7 +42,12 @@ CATALOGUE = [
              tuple(f"hierarchies-moca.{m}" for m in ("hierarchy", "rtr", "sts", "rtr_deviation", "sts_deviation", "rtr_midpoint", "sts_midpoint", "correlations")), True),
     *[Analysis(f"taxa-{size}-{group}", f"{size.title()} taxa by {group.upper()}", "153-166",
                partial(analyses.taxa, six=size == "six", grouping="group" if group == "dx" else "MMSE_category"),
-               (f"taxa-{size}-{group}.panels",)) for size in ("four", "six") for group in ("dx", "mmse")],
+               (f"taxa-{size}-{group}.panels",), opt_in=group == "mmse") for size in ("four", "six") for group in ("dx", "mmse")],
+    *[Analysis(f"taxa-principal-{group}", f"Upward/downward, transfer and storage by {group.upper()}", "153-166",
+               partial(analyses.taxa, principal=True, grouping="group" if group == "dx" else "MOCA_category"),
+               (f"taxa-principal-{group}.panels",), exploratory=group == "moca") for group in ("dx", "moca")],
+    Analysis("taxa-six-moca", "Six taxa by MoCA", "153-166", partial(analyses.taxa, six=True, grouping="MOCA_category"),
+             ("taxa-six-moca.panels",), True),
     Analysis("cn-reference", "CN-standardised regional comparisons, PCA and brain exports", "177-209", analyses.cn_reference,
              ("cn-reference.regions", "cn-reference.subjects", "cn-reference.MCI.networks", "cn-reference.AD.networks",
               "cn-reference.MCI.pca", "cn-reference.AD.pca")),

@@ -7,7 +7,9 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from .constants import ATOMS, GROUPS, PAIRS, NETWORKS, TAXA_FOUR, TAXA_SIX
+from .constants import (ATOMS, GROUPS, PAIRS, NETWORKS, TAXA_FOUR, TAXA_SIX,
+                        TAXA_PRINCIPAL, MOCA_GROUPS, MMSE_GROUPS)
+from .inference import validate_symmetric_atoms, hc3_coefficients
 from .numerics import (compare, fdr, omnibus, hierarchy, correlation, cn_standardise,
                        interval, permutation_p, connection_mask)
 from .provenance import rng_for
@@ -21,10 +23,21 @@ def context(prepared, minimum=1):
     return df, atlas, prepared.config.statistics
 
 
+def grouped_context(prepared, grouping):
+    df, atlas, settings = context(prepared, 2)
+    groups = {"group": GROUPS, "MOCA_category": MOCA_GROUPS,
+              "MMSE_category": MMSE_GROUPS}[grouping]
+    df = df.loc[df[grouping].isin(groups)].copy()
+    if len(df) < 2:
+        raise InsufficientData(f"Need at least two participants with {grouping}")
+    return df, atlas, settings, groups
+
+
 def correct(table, family_columns, settings):
     table = table.copy()
     table["q"], table["significant"] = np.nan, False
-    groups = table.groupby(family_columns, dropna=False).groups if family_columns else {"all": table.index}
+    grouping = family_columns[0] if len(family_columns) == 1 else family_columns
+    groups = table.groupby(grouping, dropna=False).groups if family_columns else {"all": table.index}
     for key, idx in groups.items():
         q, reject = fdr(table.loc[idx, "p"], settings.alpha, settings.correction)
         table.loc[idx, "q"], table.loc[idx, "significant"] = q, reject
@@ -49,13 +62,15 @@ def _compare_columns(a, b, welch):
             "status": np.where((na < 2) | (nb < 2), "insufficient_samples", np.where(valid, "ok", "zero_variance"))}
 
 
-def group_matrices(prepared):
-    df, atlas, settings = context(prepared, 2)
+def group_matrices(prepared, grouping="group"):
+    df, atlas, settings, groups = grouped_context(prepared, grouping)
     data = prepared.array("adjusted")
     p = len(atlas)
-    means = np.full((3, p, p, 16), np.nan)
-    for gi, group in enumerate(GROUPS):
-        indices = np.flatnonzero(df.group == group)
+    symmetry = validate_symmetric_atoms(data, df.index.to_numpy(),
+        prepared.config.transform.exclude_diagonal, prepared.config.transform.block_features)
+    means = np.full((len(groups), p, p, 16), np.nan)
+    for gi, group in enumerate(groups):
+        indices = df.index[df[grouping] == group].to_numpy()
         if len(indices):
             total, count = np.zeros((p, p, 16)), np.zeros((p, p, 16), int)
             for i in indices:
@@ -63,14 +78,15 @@ def group_matrices(prepared):
                 total += np.where(valid, data[i], 0)
                 count += valid
             np.divide(total, count, out=means[gi], where=count > 0)
-    mask = connection_mask(p, prepared.config.transform.exclude_diagonal)
+    mask = connection_mask(p, prepared.config.transform.exclude_diagonal, upper=True)
     ii, jj = np.where(mask)
     flat = data.reshape(len(data), -1)
     rows = []
     for atom in (0, 15):
         columns = (ii*p + jj)*16 + atom
-        for a, b in PAIRS:
-            ia, ib = np.flatnonzero(df.group == a), np.flatnonzero(df.group == b)
+        for a, b in combinations(groups, 2):
+            ia = df.index[df[grouping] == a].to_numpy()
+            ib = df.index[df[grouping] == b].to_numpy()
             for start in range(0, len(columns), prepared.config.transform.block_features):
                 end = start + prepared.config.transform.block_features
                 cols = columns[start:end]
@@ -79,29 +95,74 @@ def group_matrices(prepared):
                     "parcel_i": ii[start:end], "parcel_j": jj[start:end], **comparisons}))
     table = correct(pd.concat(rows, ignore_index=True), ["atom", "group_a", "group_b"], settings)
     result = Result(tables={"edges": table, "atlas": atlas,
-                           "group_counts": df.groupby("group").size().rename("n").reset_index()},
-                    arrays={"group_means": means}, metadata={"groups": GROUPS, "cohort": "adjusted", "family": "edges per atom/contrast"})
+                           "group_counts": df.groupby(grouping).size().rename("n").reset_index().rename(columns={grouping: "group"})},
+                    arrays={"group_means": means}, metadata={"groups": groups, "grouping": grouping,
+                        "cohort": "adjusted", "family": "unique ROI pairs per atom/contrast",
+                        "edge_convention": "unique_upper", "symmetry": symmetry})
+    name = "group-matrices" if grouping == "group" else "group-matrices-moca"
     for atom in (0, 15):
-        result.figure(f"group-matrices.{ATOMS[atom]}", "group_matrices", atom=atom, comparison="AD-vs-CN")
+        result.figure(f"{name}.{ATOMS[atom]}", "group_matrices", atom=atom,
+                      group_a=groups[0], group_b=groups[-1])
     return result
 
 
 def coefficients(prepared):
-    _, atlas, _ = context(prepared, 2)
+    df, atlas, settings = context(prepared, 2)
     model = json.loads((prepared.path / "design.json").read_text())
     beta = np.asarray(prepared.array("coefficients"))
     names = ["Intercept", *model["columns"]]
+    X = np.asarray(prepared.array("design_matrix"))
+    p, transform = len(atlas), prepared.config.transform
+    symmetry = validate_symmetric_atoms(prepared.array("adjusted"), df.index.to_numpy(),
+        transform.exclude_diagonal, transform.block_features)
+    ii, jj = np.where(connection_mask(p, transform.exclude_diagonal, upper=True))
+    raw = prepared.array("raw").reshape(-1, p*p*16)
+    tensor_rows = df.tensor_row.to_numpy(int)
+    tables = []
+    for atom in (0, 15):
+        block_size = max(1, transform.block_features//16) if transform.tdmi == "tdmi" else transform.block_features
+        for start in range(0, len(ii), block_size):
+            i, j = ii[start:start+block_size], jj[start:start+block_size]
+            edges = i*p+j
+            columns = edges*16+atom
+            Y = np.array(raw[np.ix_(tensor_rows, columns)])
+            if transform.tdmi == "tdmi":
+                # The same raw 16-atom denominator used during preparation.
+                atom_columns = (edges[:, None]*16+np.arange(16)).ravel()
+                original = raw[np.ix_(tensor_rows, atom_columns)].reshape(len(df), len(edges), 16)
+                denominator = original.sum(axis=-1)
+                valid = np.isfinite(denominator) & (abs(denominator) >= transform.epsilon)
+                normalised = np.full(Y.shape, np.nan)
+                np.divide(Y, denominator, out=normalised, where=valid)
+                Y = normalised
+            fitted = beta[:, columns]
+            inference = hc3_coefficients(X, Y, fitted)
+            for k, name in enumerate(names[1:], 1):
+                tables.append(pd.DataFrame({"atom": ATOMS[atom], "coefficient": name,
+                    "parcel_i": i, "parcel_j": j, "estimate": fitted[k],
+                    "nobs": inference["nobs"], "df_resid": inference["df_resid"],
+                    **{key: inference[key][k] for key in
+                       ("standard_error", "t", "p", "ci_lower", "ci_upper", "status")}}))
+    columns = ["atom", "coefficient", "parcel_i", "parcel_j", "estimate", "nobs", "df_resid",
+               "standard_error", "t", "p", "ci_lower", "ci_upper", "status"]
+    inference_table = correct(pd.concat(tables, ignore_index=True) if tables else
+                              pd.DataFrame(columns=columns), ["atom"], settings)
     result = Result(tables={"atlas": atlas, "design": pd.DataFrame(prepared.array("design_matrix"), columns=names)},
                     arrays={"coefficients": beta.reshape(len(beta), len(atlas), len(atlas), 16),
                             "nobs": np.asarray(prepared.array("coefficient_nobs"))},
-                    metadata={"design": model, "names": names, "cohort": "adjusted"})
+                    metadata={"design": model, "names": names, "cohort": "adjusted",
+                        "symmetry": symmetry, "coefficient_inference": "HC3; two-sided approximate Student-t; 95% CI",
+                        "family": "all non-intercept coefficients x unique ROI pairs, per atom",
+                        "tested_atoms": ["rtr", "sts"], "intercept_tested": False})
+    result.tables["inference"] = inference_table
     for atom in (0, 15):
         result.figure(f"coefficients.{ATOMS[atom]}", "coefficients", atom=atom)
+        result.figure(f"coefficients.{ATOMS[atom]}.significant", "coefficients", atom=atom, significant=True)
     return result
 
 
-def network_effects(prepared):
-    df, atlas, settings = context(prepared, 2)
+def network_effects(prepared, grouping="group"):
+    df, atlas, settings, groups = grouped_context(prepared, grouping)
     values = prepared.array("network")
     nets = sorted(atlas.network_id.unique())
     rows, observations = [], []
@@ -110,16 +171,20 @@ def network_effects(prepared):
             for i, row in df.iterrows():
                 observations.append({"scan_id": row.scan_id, "subject": row.subject, "group": row.group,
                                      "network_id": net, "network": NETWORKS[net], "atom": atom_name, "value": values[i, ni, atom]})
-            for a, b in PAIRS:
+                observations[-1]["group"] = row[grouping]
+            for a, b in combinations(groups, 2):
+                ia, ib = df.index[df[grouping] == a], df.index[df[grouping] == b]
                 rows.append({"network_id": net, "network": NETWORKS[net], "atom": atom_name, "group_a": a, "group_b": b,
-                             **compare(values[df.group == a, ni, atom], values[df.group == b, ni, atom], settings.welch)})
+                             **compare(values[ia, ni, atom], values[ib, ni, atom], settings.welch)})
     table = correct(pd.DataFrame(rows), ["group_a", "group_b"], settings)
     result = Result(tables={"effects": table, "observations": pd.DataFrame(observations)},
-                    metadata={"cohort": "adjusted", "family": "all 16 atoms x all networks per contrast"})
-    for a, b in PAIRS:
+                    metadata={"cohort": "adjusted", "groups": groups, "grouping": grouping,
+                              "family": "all 16 atoms x all networks per contrast"})
+    name = "network-effects" if grouping == "group" else "network-effects-moca"
+    for a, b in combinations(groups, 2):
         for effect in ("cohens_d", "hedges_g"):
             for subset in ("all-atoms", "rtr-sts"):
-                result.figure(f"network-effects.{b}-vs-{a}.{effect}.{subset}", "effects_grid",
+                result.figure(f"{name}.{b}-vs-{a}.{effect}.{subset}", "effects_grid",
                               table="effects", group_a=a, group_b=b, effect=effect,
                               atoms=list(ATOMS) if subset == "all-atoms" else ["rtr", "sts"])
     return result
@@ -161,9 +226,8 @@ def regional_effects(prepared):
 
 
 def hierarchies(prepared, grouping="group"):
-    df, atlas, settings = context(prepared, 2)
-    values = np.asarray(prepared.array("regional"))
-    names = list(GROUPS) if grouping == "group" else ["29-30", "20-28", "0-19"]
+    df, atlas, settings, names = grouped_context(prepared, grouping)
+    values = np.asarray(prepared.array("regional"))[df.index.to_numpy()]
     labels = df[grouping]
     means, ranks, rows, correlations = {}, {}, [], []
     for group in names:
@@ -193,12 +257,15 @@ def hierarchies(prepared, grouping="group"):
                              "status": "ok" if np.isfinite(value) and np.isfinite(lower) else "insufficient_or_constant_data"})
     profile = pd.DataFrame(rows)
     for atom in ("rtr", "sts"):
-        centres = profile.groupby("parcel_index")[atom].transform("mean")
-        profile[f"{atom}_deviation"] = profile[atom] - centres
+        baseline = profile.loc[profile.group == names[0]].set_index("parcel_index")[atom]
+        profile[f"{atom}_deviation"] = profile[atom] - profile.parcel_index.map(baseline)
         endpoints = profile.loc[profile.group.isin([names[0], names[-1]])].groupby("parcel_index")[atom].mean()
         profile[f"{atom}_midpoint"] = profile[atom] - profile.parcel_index.map(endpoints)
     result = Result(tables={"profiles": profile, "correlations": pd.DataFrame(correlations), "atlas": atlas},
-                    arrays={"bootstrap_correlations": samples}, metadata={"groups": names, "pairs": pairs, "cohort": "adjusted", "grouping": grouping})
+                    arrays={"bootstrap_correlations": samples}, metadata={"groups": names, "pairs": pairs,
+                        "cohort": "adjusted", "grouping": grouping, "profile_baseline": names[0],
+                        "deviation_definition": "group mean minus per-parcel baseline group mean",
+                        "profile_interpretation": "descriptive; ordering adds no inferential evidence"})
     for measure in ("hierarchy", "rtr", "sts", "rtr_deviation", "sts_deviation", "rtr_midpoint", "sts_midpoint"):
         result.figure(f"{name}.{measure}", "profiles", measure=measure, anchor=names[0],
                       order="difference" if "_" in measure else "reference")
@@ -206,17 +273,16 @@ def hierarchies(prepared, grouping="group"):
     return result
 
 
-def taxa(prepared, six=False, grouping="group"):
-    df, atlas, settings = context(prepared, 2)
+def taxa(prepared, six=False, grouping="group", principal=False):
+    df, atlas, settings, groups = grouped_context(prepared, grouping)
     values = np.asarray(prepared.array("network"))
-    taxonomy = TAXA_SIX if six else TAXA_FOUR
-    groups = list(GROUPS) if grouping == "group" else ["28-30", "20-27", "0-19"]
+    taxonomy = TAXA_PRINCIPAL if principal else TAXA_SIX if six else TAXA_FOUR
     nets = sorted(atlas.network_id.unique())
     observations, tests, posthoc = [], [], []
     for taxon, atoms in taxonomy.items():
         vals = values[:, :, list(atoms)].sum(axis=2)
         for ni, net in enumerate(nets):
-            samples = [vals[df[grouping] == g, ni] for g in groups]
+            samples = [vals[df.index[df[grouping] == g], ni] for g in groups]
             for i, subject in df.iterrows():
                 observations.append({"scan_id": subject.scan_id, "subject": subject.subject,
                                      "group": subject[grouping], "taxon": taxon, "network_id": net,
@@ -228,9 +294,11 @@ def taxa(prepared, six=False, grouping="group"):
     tests = correct(pd.DataFrame(tests), [], settings)
     posthoc = correct(pd.DataFrame(posthoc), [], settings)
     posthoc = posthoc.merge(tests[["taxon", "network_id", "q"]].rename(columns={"q": "omnibus_q"}), on=["taxon", "network_id"], validate="many_to_one")
-    name = f"taxa-{'six' if six else 'four'}-{'dx' if grouping == 'group' else 'mmse'}"
+    suffix = {"group": "dx", "MOCA_category": "moca", "MMSE_category": "mmse"}[grouping]
+    name = f"taxa-{'principal' if principal else 'six' if six else 'four'}-{suffix}"
     result = Result(tables={"observations": pd.DataFrame(observations), "omnibus": tests, "posthoc": posthoc},
-                    metadata={"groups": groups, "cohort": "adjusted", "taxonomy": taxonomy,
+                    metadata={"groups": groups, "grouping": grouping, "cohort": "adjusted", "taxonomy": taxonomy,
+                              "display_order": list(taxonomy),
                               "family": "all taxon/network panels; all panel/contrast posthoc tests separately"})
     result.figure(f"{name}.panels", "taxa_panels")
     return result

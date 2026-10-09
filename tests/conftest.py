@@ -6,6 +6,7 @@ import pytest
 from scipy.io import savemat
 
 from adni_x.config import Config, Inputs, Cohort, Transform, Statistics
+from adni_x.constants import ATOMS
 
 
 def make_dataset(root, per_group=8):
@@ -29,6 +30,11 @@ def make_dataset(root, per_group=8):
                 tensor += .0001*age + .0002*education + 1e-8*icv
                 tensor[:, :, 0] += gi*.03*np.arange(1, p + 1)[:, None]
                 tensor[:, :, 15] -= gi*.015*np.arange(1, p + 1)[:, None]
+                # Physical ROI exchange swaps unique-X/unique-Y atoms; rtr/sts
+                # and total TDMI are symmetric, while directed atoms may differ.
+                swap = {"r": "r", "x": "y", "y": "x", "s": "s"}
+                permutation = [ATOMS.index(swap[a[0]]+"t"+swap[a[2]]) for a in ATOMS]
+                tensor = (tensor+tensor.transpose(1, 0, 2)[..., permutation])/2
                 tensor[np.arange(p), np.arange(p)] = 100  # detect accidental self-edge inclusion
                 savemat(tensor_dir / f"{name}_desc-phiidtensor.mat", {"PhiIDTensor": tensor})
                 savemat(series_dir / f"{name}_ROI_activity.mat", {"activity": rng.normal(size=(p, 200))})
@@ -51,4 +57,12 @@ def config(tmp_path):
 def prepared(tmp_path_factory):
     from adni_x.preparation import prepare
     return prepare(make_dataset(tmp_path_factory.mktemp("prepared")))
+
+
+@pytest.fixture(scope="session")
+def bundles(prepared):
+    from adni_x.runner import run
+    report = run("all", prepared.config, render=False, include_sensitivity=True)
+    assert all(item["status"] == "complete" for item in report["targets"].values()), report["targets"]
+    return Path(report["path"])
 

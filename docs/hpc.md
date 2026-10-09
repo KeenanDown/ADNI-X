@@ -1,12 +1,96 @@
 # HPC pilot and complete rerun
 
+For the version 0.2.0 rerun, start with [the release handoff](hpc-rerun-0.2.0.md), which adds the new output checks and four atlas/estimator submissions to this existing setup guide.
+
 ## Readiness boundary
 
 Local implementation and tests use synthetic data. No cluster job has been submitted and no HPC files have been changed. The real-data pilot is **not completed locally**. Do not interpret fixture cohort counts as real ADNI counts.
 
 Copy/clone the package to your normal code directory on the HPC. Install the locked environment using Python 3.12, then make a local configuration from `configs/hpc.example.yaml`. Inputs must be read-only in normal operation. Cache/output directories must be separate writable locations with adequate scratch space.
 
-## Before computing
+## QMUL Apocrita setup
+
+QMUL's current documentation uses Slurm (`sbatch`), replacing Grid Engine
+(`qsub`); see the [migration guide](https://docs.hpc.qmul.ac.uk/using/uge_to_slurm/)
+and [Python guide](https://docs.hpc.qmul.ac.uk/apps/languages/python/).
+Confirm the scheduler in your connected terminal with `command -v sbatch`.
+If only `qsub` is available, do not submit the Slurm script: first check which
+cluster/session you are using.
+
+Copy the source to `~/code/ADNI-X` (for example, using MobaXterm's SFTP pane).
+Do not transfer a Windows virtual environment. Keep code and the Linux virtual
+environment on persistent storage, with caches in scratch and results in the
+project storage paths configured in YAML.
+
+The example saves results and validation reports under
+`/data/SBBS-PIDProject/Keenan/ADNI-X-Outputs`; create this directory before
+submitting jobs. Give a pilot its own `results` subdirectory and separate cache.
+
+From the HPC terminal:
+
+```sh
+cd ~/code/ADNI-X
+module avail python
+# Confirmed in bty184's Apocrita session; recheck availability on other systems.
+export ADNI_X_PYTHON_MODULE=python/3.12.1-gcc-12.2.0
+module load "$ADNI_X_PYTHON_MODULE"
+python --version
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.lock
+python -m pip install --no-deps --no-build-isolation -e .
+python -m pip check
+adni-x --version
+cp configs/hpc.example.yaml config.local.yaml
+```
+
+Do not continue past a failed install. The lock was verified locally and still
+needs Linux verification; do not silently substitute unpinned versions if a
+wheel/version is unavailable. Load this same module whenever using the venv,
+and export `ADNI_X_PYTHON_MODULE` again after reconnecting.
+
+Edit `config.local.yaml` to supply the verified data and atlas paths. The atlas
+example is a required input, not a file shipped with ADNI-X. Run the synthetic
+tests in a compute allocation before the real-data pilot. For example, request
+an interactive allocation with `srun --pty --mem=8G --time=01:00:00 bash`, then
+load the same module, activate the venv and run `python -m pytest`. Exit the
+allocation when finished.
+
+Submit from the repository root, with the module variable exported:
+
+```sh
+sbatch scripts/qmul_slurm.sh validate --config config.local.yaml
+squeue -u "$USER"
+# Replace JOBID with the number returned by sbatch.
+tail -f adni-x-JOBID.log
+sacct -j JOBID --format=JobID,State,ExitCode,Elapsed,MaxRSS
+```
+
+The launcher requests one CPU, 32 GB total RAM and four hours as **unmeasured
+pilot starting values**; it selects no account or partition. Override resources
+with `sbatch --mem=... --time=...` based on the pilot and your allocation. It
+activates `.venv` (override with exported `ADNI_X_VENV`), limits numerical library
+threads to the allocated CPUs and logs output immediately. More CPUs do not
+automatically parallelise the package's analysis targets.
+
+After validation and the input checks below, create the separate pilot described
+in the next section and submit:
+
+```sh
+sbatch scripts/qmul_slurm.sh run all --config config.pilot.yaml --include-sensitivity
+```
+
+Once the pilot passes, submit the full workflow using measured resource limits:
+
+```sh
+sbatch scripts/qmul_slurm.sh pipeline "$PWD/config.local.yaml"
+```
+
+Do not submit simultaneous preparation jobs against the same cache. The
+launcher also accepts individual commands such as `prepare --config ...`,
+`run group-matrices --config ...`, or `plot all --results ...`.
+
+## Input checks
 
 1. Check the S8b estimator, atom order, source/target axes, and complete cortical/subcortical parcel order against the upstream implementation. Supply the full atlas CSV.
 2. Confirm the original time-series variable and matching filename entities. Confirm that the 150–250-point rule is the intended operational filter.

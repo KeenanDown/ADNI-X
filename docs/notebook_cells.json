@@ -536,8 +536,10 @@
       "cell": 72,
       "type": "markdown",
       "source_sha256": "dd793d70a42f1d9627d3efd64bfa6f63c47f3bf2a5770d63483aadb2d530db26",
-      "targets": [],
-      "category": "unimplemented TODO (outside v1)"
+      "targets": [
+        "coefficients"
+      ],
+      "category": "coefficient inference implemented in 0.2.0"
     },
     {
       "cell": 73,

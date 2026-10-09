@@ -18,6 +18,7 @@ The style changes do not change the numerical analyses, selected cohorts,
 confound adjustment, edge masks, tests, correction families, bootstrap intervals,
 train/test split or saved results. Plotters consume saved significance flags.
 Thresholds, exploratory status and held-out versus training panels remain explicit.
+Version 0.2.0 also adds new analyses; the invariance statement above applies to restyling existing numerical bundles, not to a fresh 0.2.0 rerun.
 Effect colour limits are symmetric and are not clipped at the old arbitrary cap.
 Coefficient colour limits are also symmetric, so equal magnitudes have equal
 colour intensity. Named anatomical labels are never inferred from generic IDs.
@@ -44,6 +45,12 @@ plot("coefficients.combined", "/path/to/results/RUN_ID/coefficients")
 The combined coefficient figure is derived from the arrays already present in old
 bundles; no migration or recomputation is needed. Existing per-atom figure IDs
 remain available. The notebook displays the combined grid when present.
+
+Version 0.2.0 adds `coefficients.rtr.significant`, `coefficients.sts.significant` and the combined `coefficients.combined.significant` view. These use saved HC3/FDR flags and omit the untested intercept. They require a newly computed `inference.csv`; refreshing an old coefficient bundle cannot create tests. Unthresholded maps are retained.
+
+The `rtr_deviation` and `sts_deviation` profile figures now subtract the saved per-parcel CN means; the MoCA counterparts subtract 29–30. They sort by the endpoint group's difference from the reference. Refreshing a historical profile bundle computes these displayed differences from its saved absolute means, ignoring the old three-group-centred deviation column, without altering numerical files. Labels and sidecars identify the display transformation and updated style. Absolute and midpoint profiles remain separately available.
+
+`taxa-principal-dx.panels` and `taxa-principal-moca.panels` show upward causation, downward causation, transfer and storage in that order. `network-effects.MCI-vs-CN.cohens_d.all-atoms` and `.rtr-sts` are explicitly tested exports; both use the full saved atom/network significance family.
 
 Do not call `run` or `prepare` just to change the appearance. Package source changes
 affect the computation cache identity, but `plot` works directly with an existing

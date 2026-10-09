@@ -8,11 +8,12 @@ import sys
 from .catalogue import catalogue
 from .config import Config
 from .provenance import atomic_json, json_text, stamp
+from . import __version__
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="adni-x", description="Reproducible analyses from completed S8b PhiID tensors")
-    parser.add_argument("--version", action="version", version="ADNI-X 0.1.0")
+    parser.add_argument("--version", action="version", version=f"ADNI-X {__version__}")
     subs = parser.add_subparsers(dest="command", required=True)
     subs.add_parser("list", help="List analyses, independent figures and preparation dependencies")
     for name in ("validate", "prepare", "run"):
@@ -23,7 +24,7 @@ def main(argv=None):
         if name == "run":
             sub.add_argument("analysis", help="Analysis identifier or all")
             sub.add_argument("--no-plots", action="store_true")
-            sub.add_argument("--include-sensitivity", action="store_true", help="Include opt-in TDMI-ratio targets in all")
+            sub.add_argument("--include-sensitivity", action="store_true", help="Include opt-in MMSE and TDMI-ratio targets in all")
     sub = subs.add_parser("plot")
     sub.add_argument("figure", help="Figure identifier or all")
     sub.add_argument("--results", required=True, type=Path, help="Analysis bundle or run directory; raw data not required")

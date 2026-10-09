@@ -4,6 +4,8 @@ Reproducible ADNI analyses starting from **completed S8b PhiID tensors**. ADNI-X
 
 The workflow is **prepare once → run independent analyses → replot saved numerical results**. A Jupyter kernel, MATLAB, and the original notebook's intermediate pickles are not required.
 
+Version **0.2.0** adds separate upward/downward, transfer and storage panels, default MoCA analyses, unique symmetric rtr/sts pair tests, CN-centred profiles and HC3 coefficient inference. See the [0.2.0 HPC rerun handoff](docs/hpc-rerun-0.2.0.md) for installation, pilot checks and the four atlas/estimator submissions.
+
 ## Installation
 
 Use Python 3.12 (Python ≥3.11 is supported by the package). From this repository:
@@ -29,7 +31,7 @@ adni-x run group-matrices --config config.local.yaml
 adni-x run all --config config.local.yaml
 ```
 
-`run` produces numerical bundles and figures. Use `--no-plots` to compute only. The opt-in `longitudinal-tdmi-ratio` analysis is omitted by `all` unless `--include-sensitivity` is supplied; requesting that analysis by name is also explicit opt-in. All other implemented analyses are included, including exploratory ones.
+`run` produces numerical bundles and figures. Use `--no-plots` to compute only. MMSE taxonomy targets and `longitudinal-tdmi-ratio` are omitted by `all` unless `--include-sensitivity` is supplied; requesting a target by name is also explicit opt-in. Diagnosis and MoCA outputs are included by default, including exploratory ones.
 
 To regenerate just one figure, supply its saved analysis directory or the parent run directory:
 
@@ -45,7 +47,7 @@ Replotting needs **only the result bundle**, not raw data or preparation caches.
 - 232 parcels, MMI, no TDMI division.
 - Inclusive **150–250 retained time points**, then latest eligible scan per participant. This excludes shorter scans too and is **not a verified Basic/Advanced protocol classifier**.
 - Confounds: sex, education, visit age (`AGE + Years_bl`) and ICV. Missing ICV may be recovered from FreeSurfer; otherwise use complete cases after visit selection, with no older-visit substitution.
-- Adjustment preserves the fitting cohort's mean. Self-connections are excluded; both off-diagonal directions are retained; regional sums use axis 1.
+- Adjustment preserves the fitting cohort's mean. Self-connections are excluded; directed regional/network reductions retain both directions and regional sums use axis 1. Symmetric rtr/sts matrix tests use each unique pair once after validation.
 - Welch tests, two-sided α=.05, BH-FDR, seed 42, 10,000 resamples/permutations.
 - Prediction uses a stratified 75/25 participant split with training-only preprocessing.
 
@@ -73,6 +75,7 @@ figures = plot("hierarchies.hierarchy", report["path"])
 - [Input and atlas contracts](docs/inputs.md)
 - [Bug ledger](docs/bug_ledger.md)
 - [HPC pilot and rerun guide](docs/hpc.md)
+- [QMUL Apocrita installation and Slurm submission](docs/hpc.md#qmul-apocrita-setup)
 - [Local verification results and remaining HPC checks](docs/verification.md)
 
 ```sh

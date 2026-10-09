@@ -36,5 +36,5 @@ statistics:
   correction: fdr_bh
   test_fraction: 0.25
 cache: /data/scratch/bty184/adni-x/cache
-results: /data/SBBS-PIDProject/Keenan/Results/ADNI-X
+results: /data/SBBS-PIDProject/Keenan/ADNI-X-Outputs
 

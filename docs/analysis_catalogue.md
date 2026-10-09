@@ -2,6 +2,18 @@
 
 Every analysis can run directly from preparation. Every listed figure can be regenerated from its numerical bundle. Cell numbers refer to the supplied notebook, starting at zero.
 
+## Version 0.2.0 additions
+
+| Analysis ID | Outputs |
+|---|---|
+| `group-matrices-moca` | MoCA group matrices; validated unique rtr/sts pair contrasts |
+| `network-effects-moca` | All 16 atom × network effects for three MoCA contrasts |
+| `taxa-principal-dx` | Upward/downward causation, transfer and storage by diagnosis |
+| `taxa-principal-moca` | The same four modes by MoCA |
+| `taxa-six-moca` | All six original modes by MoCA |
+
+`coefficients` now includes `inference.csv` and per-atom `.significant` figure IDs. `taxa-four-mmse` and `taxa-six-mmse` remain callable but are opt-in for `run all`. `adni-x list` is the authoritative complete catalogue. The original cell mapping below records migration history; cell 72's coefficient-significance TODO is implemented in 0.2.0.
+
 | Analysis ID | Notebook cells | Outputs |
 |---|---|---|
 | `group-matrices` | 59-65 | Group atomic matrices and edge contrasts |
@@ -24,7 +36,7 @@ Every analysis can run directly from preparation. Every listed figure can be reg
 
 ## Coverage rules
 
-Cells 0–58 become preparation, validation and configuration. Cell 72 is an unimplemented coefficient-significance TODO and remains out of v1. Repeated function definitions, inspection expressions and commented duplicate versions are consolidated; they are not extra independent scientific results. Cell 291 becomes explicit scalar metadata exports. External MATLAB surface rendering remains outside the package, but its CSV/MAT input exports are produced by `cn-reference`.
+Cells 0–58 become preparation, validation and configuration. Cell 72 was an unimplemented coefficient-significance TODO in v1 and is implemented in 0.2.0. Repeated function definitions, inspection expressions and commented duplicate versions are consolidated; they are not extra independent scientific results. Cell 291 becomes explicit scalar metadata exports. External MATLAB surface rendering remains outside the package, but its CSV/MAT input exports are produced by `cn-reference`.
 
 The original notebook is not executed or shipped with participant outputs. `notebook_cells.json` records its content hash and assigns every cell to a migrated analysis, preparation, or a stated non-analysis category. Numerical outputs are not used as correctness targets where the notebook contains bugs.
 

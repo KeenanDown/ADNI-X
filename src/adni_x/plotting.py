@@ -22,7 +22,7 @@ from .constants import GROUPS, GROUP_COLORS, NETWORK_COLORS, NETWORKS, ATOMS
 from .provenance import atomic_json, file_hash, stamp, utc_now, verify
 
 # Reference: ADNI_Epilogue notebook. Styling only; inference is read from bundles.
-STYLE_VERSION = "epilogue-1"
+STYLE_VERSION = "epilogue-2"
 STYLE = {"font.family": "sans-serif",
          "font.sans-serif": ["Helvetica", "Arial", "Liberation Sans", "Nimbus Sans", "DejaVu Sans"],
          "svg.fonttype": "none", "pdf.fonttype": 42, "ps.fonttype": 42,
@@ -170,10 +170,14 @@ def _render(bundle, recipe):
         if bundle.manifest["configuration"]["transform"]["exclude_diagonal"]:
             means[:, np.arange(len(atlas)), np.arange(len(atlas))] = np.nan
         edges = bundle.table("edges")
-        sub = edges.loc[(edges.atom == ATOMS[atom]) & (edges.group_a == "CN") & (edges.group_b == "AD")]
+        groups = bundle.details.get("groups", list(GROUPS))
+        group_a, group_b = recipe.get("group_a", groups[0]), recipe.get("group_b", groups[-1])
+        sub = edges.loc[(edges.atom == ATOMS[atom]) & (edges.group_a == group_a) & (edges.group_b == group_b)]
         difference = np.full((len(atlas), len(atlas)), np.nan)
         sig = sub.loc[sub.significant]
         difference[sig.parcel_i.to_numpy(int), sig.parcel_j.to_numpy(int)] = sig.difference
+        if bundle.details.get("edge_convention") == "unique_upper":
+            difference[sig.parcel_j.to_numpy(int), sig.parcel_i.to_numpy(int)] = sig.difference
         fig = plt.figure(figsize=(12, 10), layout="constrained")
         layout = fig.add_gridspec(2, 4, width_ratios=[.045, 1, 1, .045], wspace=.10)
         axes = [fig.add_subplot(layout[r, c]) for r, c in ((0, 1), (0, 2), (1, 1), (1, 2))]
@@ -181,7 +185,7 @@ def _render(bundle, recipe):
         limits = (finite.min(), finite.max()) if len(finite) else None
         counts = bundle.table("group_counts").set_index("group")["n"].to_dict()
         first = None
-        for gi, group in enumerate(GROUPS):
+        for gi, group in enumerate(groups):
             im = matrix(axes[gi], means[gi][np.ix_(order, order)],
                         f"{group} (n={counts.get(group, 0)})", limits=limits, colorbar=False)
             if first is None and im is not None:
@@ -189,7 +193,7 @@ def _render(bundle, recipe):
             axes[gi].set_title(axes[gi].get_title(), pad=15)
             bars(axes[gi], atlas.network_id.to_numpy()[order], sides="matrix")
         im = matrix(axes[3], difference[np.ix_(order, order)],
-                    f"Significant changes (AD − CN)\n{threshold_name}", diverging=True, colorbar=False)
+                    f"Significant changes ({group_b} − {group_a})\n{threshold_name}", diverging=True, colorbar=False)
         axes[3].set_title(axes[3].get_title(), pad=15)
         bars(axes[3], atlas.network_id.to_numpy()[order], sides="matrix")
         if first is not None:
@@ -203,17 +207,31 @@ def _render(bundle, recipe):
         # Keep individual atom IDs, and offer the original side-by-side layout.
         values = bundle.array("coefficients")
         names = bundle.details["names"]
+        filtered = recipe.get("significant", False)
+        tests = bundle.table("inference") if filtered else None
+        row_indices = list(range(1 if filtered else 0, len(names)))
         atoms = (0, 15) if recipe.get("combined") else (recipe["atom"],)
-        fig, axes = plt.subplots(len(names), len(atoms), figsize=(4*len(atoms), 2.65*len(names)),
+        fig, axes = plt.subplots(max(1, len(row_indices)), len(atoms), figsize=(4*len(atoms), 2.65*max(1, len(row_indices))),
                                  squeeze=False, layout="constrained")
         atlas = bundle.table("atlas")
         order = np.argsort(atlas.network_id, kind="stable")
         labels = {"sex_Male": "Male − female", "education": "Education (per year)",
                   "visit_age": "Visit age (per year)", "ICV": "ICV (per volume unit)"}
-        for row, name in enumerate(names):
+        if not row_indices:
+            for ax in axes.flat:
+                no_data(ax, "No non-intercept coefficients configured")
+        for row, k in enumerate(row_indices):
+            name = names[k]
             for col, atom in enumerate(atoms):
                 ax = axes[row, col]
-                a = np.array(values[row, :, :, atom])[np.ix_(order, order)]
+                a = np.array(values[k, :, :, atom])
+                if filtered:
+                    sub = tests.loc[(tests.atom == ATOMS[atom]) & (tests.coefficient == name) & tests.significant]
+                    mask = np.zeros(a.shape, bool)
+                    i, j = sub.parcel_i.to_numpy(int), sub.parcel_j.to_numpy(int)
+                    mask[i, j] = mask[j, i] = True
+                    a = np.where(mask, a, np.nan)
+                a = a[np.ix_(order, order)]
                 if bundle.manifest["configuration"]["transform"]["exclude_diagonal"]:
                     np.fill_diagonal(a, np.nan)
                 matrix(ax, a, ("Redundancy (rtr)" if atom == 0 else "Synergy (sts)") if row == 0 else "",
@@ -223,7 +241,8 @@ def _render(bundle, recipe):
                 if col == 0:
                     ax.set_ylabel(labels.get(name, name), labelpad=14)
         network_legend(fig, atlas.network_id)
-        fig.suptitle("Confound coefficients (unthresholded)", fontsize=13)
+        fig.suptitle(f"Confound coefficients (HC3 · {threshold_name})" if filtered else
+                     "Confound coefficients (unthresholded)", fontsize=13)
     elif kind == "effects_grid":
         df = bundle.table(recipe["table"])
         df = df.loc[(df.group_a == recipe["group_a"]) & (df.group_b == recipe["group_b"]) & df.atom.isin(recipe["atoms"])]
@@ -283,6 +302,14 @@ def _render(bundle, recipe):
     elif kind == "profiles":
         df = bundle.table("profiles")
         measure = recipe["measure"]
+        baseline = recipe["anchor"]
+        is_deviation = measure.endswith("_deviation")
+        if is_deviation:
+            # Recompute from saved raw group means, including historical bundles
+            # whose stored 'deviation' meant subtraction of the three-group mean.
+            atom = measure.split("_")[0]
+            reference = df.loc[df.group == baseline].set_index("parcel_index")[atom]
+            df[measure] = df[atom]-df.parcel_index.map(reference)
         if recipe.get("order") == "difference":
             pivot = df.pivot(index="parcel_index", columns="group", values=measure.split("_")[0])
             order = (pivot[bundle.details["groups"][-1]] - pivot[recipe["anchor"]]).sort_values(ascending=False, kind="stable").index
@@ -299,6 +326,13 @@ def _render(bundle, recipe):
         right = outer[1].subgridspec(math.ceil(len(networks)/2), 2, hspace=.15)
         panels = [fig.add_subplot(right[i//2, i%2]) for i in range(len(networks))]
         ordered_nets = df.loc[df.group == recipe["anchor"]].set_index("parcel_index").reindex(order).network_id
+        finite = df[measure].to_numpy(float)
+        finite = finite[np.isfinite(finite)]
+        limits = None
+        if is_deviation and len(finite):
+            low, high = min(0, finite.min()), max(0, finite.max())
+            padding = max((high-low)*.05, 1e-8)
+            limits = (low-padding, high+padding)
         for gi, group in enumerate(bundle.details["groups"]):
             sub = df.loc[df.group == group].set_index("parcel_index").reindex(order)
             main.scatter(range(len(sub)), sub[measure], label=group, color=color(group, gi),
@@ -310,7 +344,14 @@ def _render(bundle, recipe):
                 ax.set_title(SHORT_NETWORKS[network], color=NETWORK_COLORS[network], fontsize=10)
                 ax.set_xticks([]); ax.set_yticks([]); clean_axes(ax)
         main.set(title=f"{ordering} ordering (n={len(order)})", xlabel=f"Parcel rank ({ordering} order)",
-                 ylabel=measure_label(measure))
+                 ylabel=f"Regional {('redundancy' if atom == 'rtr' else 'synergy')}: difference from {baseline}" if is_deviation else measure_label(measure))
+        if is_deviation:
+            for ax in [main, *panels]:
+                ax.axhline(0, color=".6", linewidth=.6, zorder=0)
+                if limits is not None:
+                    ax.set_ylim(limits)
+            fig.suptitle(f"Descriptive profiles · {baseline} baseline subtracted · ordering adds no inferential evidence",
+                         fontsize=8, color=".4")
         clean_axes(main)
         main.legend(frameon=False, fontsize=9)
         rgba = np.array([matplotlib.colors.to_rgba(NETWORK_COLORS[int(n)]) for n in ordered_nets])
@@ -335,7 +376,7 @@ def _render(bundle, recipe):
                      "downward_causation", "erasure", "copy")
         if len(bundle.details["taxonomy"]) == 6:
             preferred = ("upward_causation", "downward_causation", "erasure", "copy", "transfer", "storage")
-        taxa = [t for t in preferred if t in bundle.details["taxonomy"]]
+        taxa = bundle.details.get("display_order") or [t for t in preferred if t in bundle.details["taxonomy"]]
         taxa += [t for t in bundle.details["taxonomy"] if t not in taxa]
         nets, groups = sorted(df.network_id.unique()), bundle.details["groups"]
         fig, axes = grid(len(taxa), columns=math.ceil(len(taxa)/2), width=4.5, height=3.5)
@@ -504,7 +545,7 @@ def _render(bundle, recipe):
     else:
         raise ValueError(f"Unknown saved figure kind: {kind}")
     if bundle.manifest.get("exploratory"):
-        fig.text(.995, .002, "Exploratory analysis", ha="right", va="bottom", fontsize=7, color=".4")
+        fig.text(.995, 1.008, "Exploratory analysis", ha="right", va="bottom", fontsize=7, color=".4")
     return fig
 
 
@@ -533,9 +574,17 @@ def plot(figure, results):
         if bundle.manifest["analysis_id"] == "coefficients" and not any(
                 r["id"] == "coefficients.combined" for r in recipes):
             recipes.append({"id": "coefficients.combined", "kind": "coefficients", "combined": True})
+        if bundle.manifest["analysis_id"] == "coefficients" and "inference" in bundle.manifest.get("tables", []) and not any(
+                r["id"] == "coefficients.combined.significant" for r in recipes):
+            recipes.append({"id": "coefficients.combined.significant", "kind": "coefficients", "combined": True, "significant": True})
         for recipe in recipes:
             if figure != "all" and recipe["id"] != figure:
                 continue
+            if recipe["kind"] == "profiles" and recipe["measure"].endswith("_deviation"):
+                recipe = {**recipe, "display_transform": "group mean minus per-parcel baseline group mean",
+                          "display_baseline": recipe["anchor"],
+                          "display_order_contrast": f"{bundle.details['groups'][-1]} minus {recipe['anchor']}",
+                          "descriptive": True}
             found = True
             fig = render(bundle, recipe)
             config = bundle.manifest["configuration"]

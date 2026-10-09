@@ -1,5 +1,18 @@
 # Local verification — 2026-09-16
 
+## Release 0.2.0 verification — 9 October 2026
+
+- Full WSL test suite: **185 passed**, using Python 3.12.3 and the existing locked dependency versions.
+- **22 analysis targets / 105 registered figures**; default runs include 19 targets, with MMSE and the longitudinal ratio branch optional.
+- Synthetic integration runs at actual 232/116 matrix sizes completed all default targets for **232-MMI, 232-CCS, 116-MMI and 116-CCS**, using 18 synthetic participants and eight networks per configuration.
+- Unique matrix families contained **26,796** or **6,670** pairs per atom/contrast. Coefficient tables contained **214,368** or **53,360** non-intercept tests per configuration (two atoms × four covariates × unique pairs).
+- Batched HC3 standard errors, p-values and confidence intervals matched an independent full-sandwich calculation. Original and TDMI-normalised responses, missing feature rows, invalid regression designs, correction families and mirrored displays were checked.
+- CN/MoCA-baseline centring, endpoint-difference ordering, saved-result compatibility, MCI–CN Cohen's d exports and explicit MoCA score boundaries/missingness were tested. Notebook code parses, IDs are unique and participant outputs are cleared.
+- After visual review corrected a profile-note/legend collision, the affected rendering and rerun suites passed **132 checks**, including a non-overlap assertion.
+- Aggregate integration and wheel-install checks are in `reports/hpc-rerun-0.2.0/`. The synthetic example SVG/PDF/PNG exports were inspected and removed after verification; `scripts/verify_rerun_release.py` can regenerate them. These tensors are format/integration fixtures, not estimates computed from neural signals; their group results have no scientific interpretation.
+
+The older verification record below is retained as history. No real-data cluster jobs have been run for this release. See [the HPC handoff](hpc-rerun-0.2.0.md).
+
 The implementation was verified on macOS arm64, Python 3.12.14, using `requirements.lock`.
 
 | Check | Result |

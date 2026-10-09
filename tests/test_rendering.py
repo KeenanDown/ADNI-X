@@ -10,13 +10,6 @@ from adni_x.provenance import file_hash, verify
 from adni_x.runner import run
 
 
-@pytest.fixture(scope="session")
-def bundles(prepared):
-    report = run("all", prepared.config, render=False, include_sensitivity=True)
-    assert all(item["status"] == "complete" for item in report["targets"].values())
-    return Path(report["path"])
-
-
 @pytest.mark.parametrize("figure", list(FIGURES))
 def test_every_registered_renderer_draws_from_saved_results(bundles, figure):
     path = bundles / FIGURES[figure]
