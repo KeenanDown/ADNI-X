@@ -1,4 +1,4 @@
-include README.md requirements.lock
+include README.md LICENSE requirements.lock
 recursive-include configs *.yaml
 recursive-include docs *.md *.json
 recursive-include notebooks *.ipynb

@@ -89,3 +89,7 @@ python -m build --no-isolation
 Tests use synthetic participants only. Real HPC tensor conventions, atlas identity and cohort counts must be checked in the pilot; passing local tests does not certify the real dataset. Dataset files, caches and participant-level results are ignored by Git. Do not commit them.
 
 Updating to this grouping workflow creates a new cache/run identity. Existing YAML files need no extra settings, but saved results must be recomputed to add the MoCA targets. Old result directories remain untouched.
+
+## License
+
+ADNI-X is released under the [MIT License](LICENSE). External dependencies, including elph, retain their own licences. This licence does not cover ADNI data or grant access to it.
