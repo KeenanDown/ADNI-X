@@ -1,6 +1,6 @@
 # ADNI-X
 
-Reproducible ADNI analyses starting from **completed S8b PhiID tensors**. ADNI-X does not recompute PhiID or preprocess MRI scans.
+Reproducible ADNI analyses starting from **completed S8b PhiID tensors**. The ADNI-X analysis commands do not recompute PhiID or preprocess MRI scans. The separate [preprocessing source and instructions](preprocessing/README.md) preserve the available upstream ADNI-PID scripts, with external dependencies and outstanding provenance checks documented.
 
 The workflow is **prepare once → run independent analyses → replot saved numerical results**. A Jupyter kernel, MATLAB, and the original notebook's intermediate pickles are not required.
 

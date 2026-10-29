@@ -1,0 +1,108 @@
+{
+  "source": "Author-supplied ADNI-PID-source-review.tar.gz, inspected 2026-10-29",
+  "source_archive_sha256": "ca2bbb152085a26073a155da8fdf66c8f3f0892f4c72183e311ccaab01ea025a",
+  "historical_execution_verified": false,
+  "files": [
+    {
+      "file": "RegressFilter.py",
+      "source_filename": "RegressFilter.py",
+      "source_sha256": "27aa152473aa92f4991c0b47aecfc704c55906d3421c2a069af96eb256a8768b",
+      "distributed_sha256": "5429f11d10772534d6234655a34f2eddd357d58c4a388506ba5321f25930a126",
+      "changes": [
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    },
+    {
+      "file": "parcellate.m",
+      "source_filename": "parcellate.m",
+      "source_sha256": "3a8b54e0c01af3e70973ae99dc6d412c385713f6bbb09ee53f5a69e4ffb496e1",
+      "distributed_sha256": "8b30318ac68caf9d2f907dc88b4e414470a0c074a77848bb39e28ed130921318",
+      "changes": [
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    },
+    {
+      "file": "create_phiID_tensors_v3.m",
+      "source_filename": "create_phiID_tensors_v3.m",
+      "source_sha256": "2f7953046378cd83fd149bbda84a71f4549b0c5571a36c8d79349dd4a5f02b25",
+      "distributed_sha256": "2f7953046378cd83fd149bbda84a71f4549b0c5571a36c8d79349dd4a5f02b25",
+      "changes": []
+    },
+    {
+      "file": "historical/create_phiID_tensors_v2.m",
+      "source_filename": "create_phiID_tensors_v2.m",
+      "source_sha256": "ce94bd009894ce5c9c558c14b4c18c3b09d0caac1d43f43ed09122727fa066da",
+      "distributed_sha256": "db3dc478c1468cd0853166cea32475915207c55303145cf3889f55a28059a62f",
+      "changes": [
+        "Replace participant identifier in documentation example with a placeholder."
+      ]
+    },
+    {
+      "file": "historical/create_phiID_tensors.m",
+      "source_filename": "create_phiID_tensors.m",
+      "source_sha256": "5406e6a1fa6db43f03cb3874d13d1d605605b459eea9517cb4231920ebe78e9a",
+      "distributed_sha256": "491ebb2f9604825ab816d3a4e9ea5ccc68e990d98e95b7a9934a926404c59754",
+      "changes": [
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    },
+    {
+      "file": "hpc/S3-ADNItoBIDS.sh",
+      "source_filename": "S3-ADNItoBIDS.sh",
+      "source_sha256": "feeca4f00c259a2466e043dcde742306504522800b2e3a435261c9d3e54d3c6e",
+      "distributed_sha256": "f9a1406cdce953bd0d2b65ea2a80a745dd7c2cb502a3305519cd86d142529f46",
+      "changes": [
+        "Replace site-specific path prefixes with placeholders; remove notification email; add historical-example header."
+      ]
+    },
+    {
+      "file": "hpc/S4-ADNIfMRIPrep.sh",
+      "source_filename": "S4-ADNIfMRIPrep.sh",
+      "source_sha256": "0ecaf237ad9c5b39361d3146e01e01b13bfe93309bf07dec0e6112d2de61747b",
+      "distributed_sha256": "1c27cfea6085ad51f0876ade16d501d5da8994f249f7061bb3b1f91e29f7c6ce",
+      "changes": [
+        "Replace site-specific path prefixes with placeholders; remove notification email; add historical-example header."
+      ]
+    },
+    {
+      "file": "hpc/S5-RegressFilter.sh",
+      "source_filename": "S5-RegressFilter.sh",
+      "source_sha256": "01aad3757af75337bc719c17f918594c6cdd5dfe961b71e6f645c1eeaa6e9833",
+      "distributed_sha256": "d2dee44e53e97f787709b88f7d0b16c87c271c9098fecd8cef99717a91be753b",
+      "changes": [
+        "Replace site-specific path prefixes with placeholders; remove notification email; add historical-example header.",
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    },
+    {
+      "file": "hpc/S8b-CreatePhiIDTensor.sh",
+      "source_filename": "S8b-CreatePhiIDTensor.sh",
+      "source_sha256": "fedd7111b101b94904ccfc0e9d7a96c6fa28bb975ea49eda6a65175290169172",
+      "distributed_sha256": "db522625a003c0769905299dcd7ba176e9962316ffefe4ae6ea5dbeac3ec3ef1",
+      "changes": [
+        "Replace site-specific path prefixes with placeholders; remove notification email; add historical-example header.",
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    },
+    {
+      "file": "hpc/S8bx-CreatePhiIDTensor-116.sh",
+      "source_filename": "S8bx-CreatePhiIDTensor-116.sh",
+      "source_sha256": "c4686a6e6a28a6069954fd455b2ebb3fbe65d21823ada9c45902712fd205433c",
+      "distributed_sha256": "f5cfb913f9aee10c2681da46b0083adf4e33ba0a8c611db2deb4c0bdb3db2734",
+      "changes": [
+        "Replace site-specific path prefixes with placeholders; remove notification email; add historical-example header.",
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    },
+    {
+      "file": "hpc/S8bx-CreatePhiIDTensor-232.sh",
+      "source_filename": "S8bx-CreatePhiIDTensor-232.sh",
+      "source_sha256": "4302f73fa69ccec1d9f787701b1522719b366853903d92e63034b28838f2b8d4",
+      "distributed_sha256": "cfac93f70717cf3ec0c302b98433131dcd8989c236abb75bbcf069317eb4992e",
+      "changes": [
+        "Replace site-specific path prefixes with placeholders; remove notification email; add historical-example header.",
+        "Normalize line endings and remove trailing whitespace only."
+      ]
+    }
+  ]
+}

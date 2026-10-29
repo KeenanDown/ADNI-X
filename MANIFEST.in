@@ -4,4 +4,4 @@ recursive-include docs *.md *.json
 recursive-include notebooks *.ipynb
 recursive-include scripts *.py *.sh
 recursive-include tests *.py
-
+recursive-include preprocessing *.md *.json *.py *.m *.sh
