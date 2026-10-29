@@ -1,9 +1,10 @@
+# Replace /path/to placeholders with your local input, cache and output paths.
 inputs:
-  tensors: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/S8bOut-20Nov23
-  series: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/ParcellatedScans-20Nov23
-  clinical: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/ADNIMerge-Nov22.csv
-  atlas: /data/SBBS-PIDProject/Keenan/ADNI-X-Outputs/resources/atlas116.csv
-  freesurfer: /data/SBBS-PIDProject/Datasets/ADNI/20Nov23/S8bOut-20Nov23/sourcedata/freesurfer
+  tensors: /path/to/adni/tensors
+  series: /path/to/adni/series
+  clinical: /path/to/adni/ADNIMERGE.csv
+  atlas: /path/to/resources/atlas116.csv
+  freesurfer: /path/to/adni/freesurfer
   resolutions: null
   tensor_variable: PhiIDTensor
   series_variable: ROI_activity
@@ -44,5 +45,5 @@ statistics:
   welch: true
   correction: fdr_bh
   test_fraction: 0.25
-cache: /gpfs/scratch/bty184/adni-x/cache
-results: /data/SBBS-PIDProject/Keenan/ADNI-X-Outputs
+cache: /path/to/scratch/adni-x/cache
+results: /path/to/project/adni-x/results

@@ -22,16 +22,17 @@ Do not transfer a Windows virtual environment. Keep code and the Linux virtual
 environment on persistent storage, with caches in scratch and results in the
 project storage paths configured in YAML.
 
-The example saves results and validation reports under
-`/data/SBBS-PIDProject/Keenan/ADNI-X-Outputs`; create this directory before
-submitting jobs. Give a pilot its own `results` subdirectory and separate cache.
+The example uses `/path/to/project/adni-x/results` as a placeholder for results
+and validation reports. Replace it with your own writable project directory and
+create that directory before submitting jobs. Give a pilot its own `results`
+subdirectory and separate cache.
 
 From the HPC terminal:
 
 ```sh
 cd ~/code/ADNI-X
 module avail python
-# Confirmed in bty184's Apocrita session; recheck availability on other systems.
+# Example module; check availability in your HPC session.
 export ADNI_X_PYTHON_MODULE=python/3.12.1-gcc-12.2.0
 module load "$ADNI_X_PYTHON_MODULE"
 python --version
